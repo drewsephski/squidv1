@@ -8,12 +8,12 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](<https://vercel.com/new/clone?repository-url=https://github.com/cgoinglove/better-chatbot&env=BETTER_AUTH_SECRET&env=OPENAI_API_KEY&env=GOOGLE_GENERATIVE_AI_API_KEY&env=ANTHROPIC_API_KEY&envDescription=BETTER_AUTH_SECRET+is+required+(enter+any+secret+value).+At+least+one+LLM+provider+API+key+(OpenAI,+Claude,+or+Google)+is+required,+but+you+can+add+all+of+them.+See+the+link+below+for+details.&envLink=https://github.com/cgoinglove/better-chatbot/blob/main/.env.example&demo-title=squid&demo-description=An+Open-Source+Chatbot+Template+Built+With+Next.js+and+the+AI+SDK+by+Vercel.&products=[{"type":"integration","protocol":"storage","productSlug":"neon","integrationSlug":"neon"},{"type":"integration","protocol":"storage","productSlug":"upstash-kv","integrationSlug":"upstash"},{"type":"blob"}]>)
 
-🚀 **[Live Demo](https://better-chatbot-demo.vercel.app/)** | See the experience in action in the [preview](#preview) below!
+🚀 **[Live Demo](https://squidv1-demo.vercel.app/)** | See the experience in action in the [preview](#preview) below!
 
 #### Demo Chats
 
-- **MCP Tools Demo:** [Chat with Tools](https://better-chatbot-demo.vercel.app/export/a4820921-8012-496b-8a5d-13757050bafe)
-- **Image Generation Demo:** [Chat with Image Generation](https://better-chatbot-demo.vercel.app/export/452ad745-9efb-49ae-9114-10db15f1b827)
+- **MCP Tools Demo:** [Chat with Tools](https://squidv1-demo.vercel.app/export/a4820921-8012-496b-8a5d-13757050bafe)
+- **Image Generation Demo:** [Chat with Image Generation](https://squidv1-demo.vercel.app/export/452ad745-9efb-49ae-9114-10db15f1b827)
 
 ## Quick Start 🚀
 
@@ -415,7 +415,7 @@ Planned features coming soon to squid:
 - [ ] **RAG (Retrieval-Augmented Generation)**
 - [ ] **Web-based Compute** (with [WebContainers](https://webcontainers.io) integration)
 
-💡 If you have suggestions or need specific features, please create an [issue](https://github.com/cgoinglove/better-chatbot/issues)!
+💡 If you have suggestions or need specific features, please create an [issue](https://github.com/drewsephski/squidv1/issues)!
 
 ## 💖 Support
 

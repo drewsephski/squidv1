@@ -11,6 +11,13 @@ declare global {
 
 const createCache = () => {
   const redisUrl = process.env.REDIS_URL;
+  const isDesktop = process.env.NEXT_PUBLIC_SQUID_PORT;
+
+  if (isDesktop) {
+    logger.info("Using LocalCache for desktop mode");
+    const { cache } = require("./cache.local");
+    return cache;
+  }
 
   if (IS_DEV) {
     logger.info("Using MemoryCache for development");

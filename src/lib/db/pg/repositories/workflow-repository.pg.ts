@@ -1,11 +1,11 @@
 import { and, desc, eq, inArray, not, or, sql } from "drizzle-orm";
-import { pgDb } from "../db.pg";
+import { pgDb } from "../../db.sqlite";
 import {
   UserTable,
   WorkflowEdgeTable,
   WorkflowNodeDataTable,
   WorkflowTable,
-} from "../schema.pg";
+} from "../../schema.sqlite";
 import {
   DBWorkflow,
   DBEdge,

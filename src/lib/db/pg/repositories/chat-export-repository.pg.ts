@@ -6,12 +6,12 @@ import {
   ChatExportSummary,
   ChatExportWithUser,
 } from "app-types/chat-export";
-import { pgDb } from "../db.pg";
+import { pgDb } from "../../db.sqlite";
 import {
   ChatExportCommentTable,
   ChatExportTable,
   UserTable,
-} from "../schema.pg";
+} from "../../schema.sqlite";
 import { and, count, eq, sql } from "drizzle-orm";
 import z from "zod";
 import { pgChatRepository } from "./chat-repository.pg";

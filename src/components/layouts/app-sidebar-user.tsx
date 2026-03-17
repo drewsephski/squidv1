@@ -140,7 +140,7 @@ export function AppSidebarUserInner(props: {
             <DropdownMenuItem
               onClick={() => {
                 window.open(
-                  "https://github.com/cgoinglove/better-chatbot/issues/new",
+                  "https://github.com/drewsephski/squidv1/issues/new",
                   "_blank",
                 );
               }}

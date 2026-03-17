@@ -2,7 +2,7 @@
 import { mcpClientsManager } from "lib/ai/mcp/mcp-manager";
 import { z } from "zod";
 
-import { McpServerTable } from "lib/db/pg/schema.pg";
+import { McpServerTable } from "lib/db/schema.sqlite";
 import { mcpOAuthRepository, mcpRepository } from "lib/db/repository";
 import {
   canCreateMCP,

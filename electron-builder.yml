@@ -1,0 +1,69 @@
+# electron-builder.yml
+# Squid — desktop build configuration
+# Docs: https://www.electron.build/configuration/configuration
+
+appId: com.squid.app
+productName: Squid
+copyright: "Copyright © 2025 Squid"
+
+# The compiled Electron main/preload entry points
+# (tsc compiles electron/ → dist-electron/)
+main: dist-electron/main.js
+
+directories:
+  output: release
+  buildResources: build-resources  # put your .icns / icon.png here
+
+# Which files to include in the app bundle
+files:
+  - dist-electron/**/*       # compiled Electron layer
+  - .next/**/*               # compiled Next.js output
+  - public/**/*              # static assets
+  - package.json
+  - next.config.*
+
+# ── macOS targets ─────────────────────────────────────────────────────────────
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]    # Intel + Apple Silicon universals
+    - target: mas            # Mac App Store (add later)
+      arch: [x64, arm64]
+  icon: build-resources/icon.icns
+  category: public.app-category.productivity
+  # Hardened runtime is required for notarization
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build-resources/entitlements.mac.plist
+  entitlementsInherit: build-resources/entitlements.mac.inherit.plist
+  notarize: false  # Set to true + add credentials when ready to ship
+
+dmg:
+  title: "Install Squid"
+  background: build-resources/dmg-background.png   # optional, 540x380
+  window:
+    width: 540
+    height: 380
+  contents:
+    - x: 130
+      y: 220
+      type: file
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+# ── Mac App Store ──────────────────────────────────────────────────────────────
+mas:
+  entitlements: build-resources/entitlements.mas.plist
+  entitlementsInherit: build-resources/entitlements.mas.inherit.plist
+  # MAS sandbox restricts child_process — MCP stdio servers won't work in MAS.
+  # Use HTTP/SSE MCP only, or ship a separate non-MAS DMG for full MCP support.
+  provisioningProfile: build-resources/embedded.provisionprofile  # from Apple Dev portal
+
+# ── Auto-updater (DMG only — MAS uses App Store updates) ──────────────────────
+publish:
+  - provider: github
+    owner: your-github-username   # ← replace
+    repo: squid
+    # Set GH_TOKEN env var in CI for publishing

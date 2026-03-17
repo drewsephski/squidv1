@@ -16,7 +16,7 @@ import {
   toAny,
 } from "lib/utils";
 import { safe } from "ts-safe";
-import { McpServerTable } from "lib/db/pg/schema.pg";
+import { McpServerTable } from "lib/db/schema.sqlite";
 import { createMCPToolId } from "./mcp-tool-id";
 import globalLogger from "logger";
 import { jsonSchema, ToolCallOptions } from "ai";

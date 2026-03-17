@@ -4,14 +4,14 @@ import {
   UserPreferences,
   UserRepository,
 } from "app-types/user";
-import { pgDb as db, pgDb } from "../db.pg";
+import { pgDb as db, pgDb } from "../../db.sqlite";
 import {
   AccountTable,
   ChatMessageTable,
   ChatThreadTable,
   SessionTable,
   UserTable,
-} from "../schema.pg";
+} from "../../schema.sqlite";
 import { count, eq, getTableColumns, sql } from "drizzle-orm";
 
 // Helper function to get user columns without password

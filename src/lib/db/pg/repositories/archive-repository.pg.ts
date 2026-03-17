@@ -4,8 +4,8 @@ import {
   ArchiveRepository,
   ArchiveWithItemCount,
 } from "app-types/archive";
-import { pgDb as db } from "../db.pg";
-import { ArchiveTable, ArchiveItemTable } from "../schema.pg";
+import { pgDb as db } from "../../db.sqlite";
+import { ArchiveTable, ArchiveItemTable } from "../../schema.sqlite";
 import { and, eq, count } from "drizzle-orm";
 import { generateUUID } from "lib/utils";
 

@@ -1,6 +1,6 @@
 import { Agent, AgentRepository, AgentSummary } from "app-types/agent";
-import { pgDb as db } from "../db.pg";
-import { AgentTable, BookmarkTable, UserTable } from "../schema.pg";
+import { pgDb as db } from "../../db.sqlite";
+import { AgentTable, BookmarkTable, UserTable } from "../../schema.sqlite";
 import { and, desc, eq, ne, or, sql } from "drizzle-orm";
 import { generateUUID } from "lib/utils";
 
