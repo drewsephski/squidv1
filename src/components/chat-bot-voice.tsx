@@ -7,6 +7,7 @@ import {
   OPENAI_VOICE,
   useOpenAIVoiceChat as OpenAIVoiceChat,
 } from "lib/ai/speech/open-ai/use-voice-chat.openai";
+import { useDeepgramChatterboxVoiceChat } from "lib/ai/speech/deepgram-chatterbox/use-voice-chat";
 import { cn, groupBy, isNull } from "lib/utils";
 import {
   CheckIcon,
@@ -42,7 +43,6 @@ import {
 } from "ui/dropdown-menu";
 import { GeminiIcon } from "ui/gemini-icon";
 import { MessageLoading } from "ui/message-loading";
-import { OpenAIIcon } from "ui/openai-icon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "ui/tooltip";
 import { ToolMessagePart } from "./message-parts";
 
@@ -122,6 +122,25 @@ export function ChatBotVoice() {
     );
   }, [agentId, agent, mcpList, allowedMcpServers]);
 
+  // Always call both hooks to maintain consistent hook order
+  const deepgramChatterboxVoiceChat = useDeepgramChatterboxVoiceChat({
+    toolMentions,
+    agentId,
+    ...voiceChat.options.providerOptions,
+  });
+
+  const openAIVoiceChat = OpenAIVoiceChat({
+    toolMentions,
+    agentId,
+    ...voiceChat.options.providerOptions,
+  });
+
+  // Choose which hook result to use based on provider
+  const voiceChatSession =
+    voiceChat.options.provider === "deepgram-chatterbox"
+      ? deepgramChatterboxVoiceChat
+      : openAIVoiceChat;
+
   const {
     isListening,
     isAssistantSpeaking,
@@ -134,11 +153,7 @@ export function ChatBotVoice() {
     startListening,
     stop,
     stopListening,
-  } = OpenAIVoiceChat({
-    toolMentions,
-    agentId,
-    ...voiceChat.options.providerOptions,
-  });
+  } = voiceChatSession;
 
   const startWithSound = useCallback(() => {
     if (!startAudio.current) {
@@ -363,7 +378,6 @@ export function ChatBotVoice() {
                           className="flex items-center gap-2 cursor-pointer"
                           icon=""
                         >
-                          <OpenAIIcon className="size-3.5 stroke-none fill-foreground" />
                           Open AI
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
@@ -397,6 +411,41 @@ export function ChatBotVoice() {
                                 </DropdownMenuItem>
                               ),
                             )}
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger
+                          className="flex items-center gap-2 cursor-pointer"
+                          icon=""
+                        >
+                          Deepgram + Chatterbox
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                            <DropdownMenuItem
+                              className="cursor-pointer flex items-center justify-between"
+                              onClick={() =>
+                                appStoreMutate({
+                                  voiceChat: {
+                                    ...voiceChat,
+                                    options: {
+                                      provider: "deepgram-chatterbox",
+                                      providerOptions: {
+                                        voice: "default",
+                                      },
+                                    },
+                                  },
+                                })
+                              }
+                            >
+                              Default (Free)
+                              {voiceChat.options.provider ===
+                                "deepgram-chatterbox" && (
+                                <CheckIcon className="size-3.5" />
+                              )}
+                            </DropdownMenuItem>
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                       </DropdownMenuSub>

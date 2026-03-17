@@ -37,6 +37,14 @@ export default function SignIn({
 }) {
   const t = useTranslations("Auth.SignIn");
 
+  // Debug: Log the props to see what values we're getting
+  console.log("SignIn props:", {
+    emailAndPasswordEnabled,
+    signUpEnabled,
+    socialAuthenticationProviders,
+    isFirstUser,
+  });
+
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useObjectState({
@@ -81,7 +89,7 @@ export default function SignIn({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col">
-          {emailAndPasswordEnabled && !isFirstUser && (
+          {emailAndPasswordEnabled && (
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
