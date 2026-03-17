@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Squid",
-  description: "Squid is a chatbot that uses the Tools to answer questions.",
+  description: "Squid is an AI assistant that uses Tools to answer questions.",
 };
 
 export default async function RootLayout({
