@@ -2,7 +2,7 @@
 import { mcpClientsManager } from "lib/ai/mcp/mcp-manager";
 import { z } from "zod";
 
-import { McpServerTable } from "lib/db/schema.sqlite";
+import { McpServerTable } from "lib/db/pg/schema.pg";
 import { mcpOAuthRepository, mcpRepository } from "lib/db/repository";
 import {
   canCreateMCP,
@@ -103,6 +103,7 @@ export async function saveMcpClientAction(
   // Add userId to the server object
   const serverWithUser = {
     ...server,
+    id: server.id || crypto.randomUUID(), // Generate UUID if not provided
     userId: currentUser.id,
     visibility: server.visibility || "private",
   };

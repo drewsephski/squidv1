@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { passwordSchema } from "lib/validations/password";
 
-import { UserEntity } from "lib/db/schema.sqlite";
+import { UserEntity } from "lib/db/pg/schema.pg";
 import { getSession } from "auth/server";
 
 export type UserPreferences = {

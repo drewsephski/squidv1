@@ -1,9 +1,9 @@
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { join } from "path";
-import { pgDb } from "lib/db/db.sqlite";
+import { pgDb } from "lib/db/pg/db.pg";
 
 export const runMigrate = async () => {
-  console.log("⏳ Running SQLite migrations...");
+  console.log("⏳ Running PostgreSQL migrations...");
 
   const start = Date.now();
   const result = await migrate(pgDb, {
@@ -11,6 +11,6 @@ export const runMigrate = async () => {
   });
   const end = Date.now();
 
-  console.log("✅ SQLite migrations completed in", end - start, "ms");
+  console.log("✅ PostgreSQL migrations completed in", end - start, "ms");
   return result;
 };

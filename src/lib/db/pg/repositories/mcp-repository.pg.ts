@@ -1,5 +1,5 @@
-import { pgDb as db } from "../../db.sqlite";
-import { McpServerTable, UserTable } from "../../schema.sqlite";
+import { pgDb as db } from "../db.pg";
+import { McpServerTable, UserTable } from "../schema.pg";
 import { eq, or, desc } from "drizzle-orm";
 import { generateUUID } from "lib/utils";
 import type { MCPRepository } from "app-types/mcp";

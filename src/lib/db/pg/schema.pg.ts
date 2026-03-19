@@ -121,22 +121,29 @@ export const UserTable = pgTable("user", {
 // Roles are now managed via the 'role' field on UserTable
 
 export const SessionTable = pgTable("session", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  id: text("id")
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => crypto.randomUUID()),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   userId: uuid("user_id")
     .notNull()
     .references(() => UserTable.id, { onDelete: "cascade" }),
-  // Admin plugin field (from better-auth generated schema)
   impersonatedBy: text("impersonated_by"),
 });
 
 export const AccountTable = pgTable("account", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  id: text("id")
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => crypto.randomUUID()),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: uuid("user_id")
@@ -149,8 +156,10 @@ export const AccountTable = pgTable("account", {
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const VerificationTable = pgTable("verification", {
@@ -158,12 +167,11 @@ export const VerificationTable = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
-  updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 // Tool customization table for per-user additional instructions

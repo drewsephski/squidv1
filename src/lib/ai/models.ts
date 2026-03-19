@@ -256,7 +256,7 @@ export const isToolCallUnsupportedModel = (model: LanguageModel) => {
 };
 
 const isImageInputUnsupportedModel = (model: LanguageModelV2) => {
-  return !Object.values(staticSupportImageInputModels).includes(model);
+  return !Object.values(staticSupportImageInputModels).includes(model as any);
 };
 
 export const getFilePartSupportedMimeTypes = (model: LanguageModel) => {

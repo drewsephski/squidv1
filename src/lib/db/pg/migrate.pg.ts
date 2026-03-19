@@ -1,6 +1,6 @@
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { join } from "path";
-import { pgDb } from "lib/db/db.sqlite";
+import { pgDb } from "lib/db/pg/db.pg";
 
 export const runMigrate = async () => {
   console.log("⏳ Running PostgreSQL migrations...");

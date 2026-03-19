@@ -3,7 +3,7 @@
   "version": "1.26.0",
   "main": "dist-electron/main.js",
   "private": true,
-  "author": "cgoinglove",
+  "author": "drewsepeczi",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -95,7 +95,6 @@
     "ai": "^5.0.116",
     "bcrypt-ts": "^7.1.0",
     "better-auth": "^1.4.9",
-    "better-sqlite3": "^12.8.0",
     "chokidar": "^4.0.3",
     "class-variance-authority": "^0.7.1",
     "client": "link:@vercel/blob/client",
@@ -114,6 +113,7 @@
     "framer-motion": "^12.23.26",
     "get-port": "^7.1.0",
     "hast-util-to-jsx-runtime": "^2.3.6",
+    "ioredis": "^5.10.0",
     "json-schema": "^0.4.0",
     "katex": "^0.16.27",
     "lucide-react": "^0.486.0",
@@ -125,6 +125,8 @@
     "next-themes": "^0.4.6",
     "ogl": "^1.0.11",
     "ollama-ai-provider-v2": "^1.5.5",
+    "pg": "^8.20.0",
+    "postgres": "^3.4.8",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-markdown": "^10.1.0",
@@ -151,16 +153,16 @@
     "@electron/rebuild": "^4.0.3",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.18",
-    "@types/better-sqlite3": "^7.6.10",
     "@types/json-schema": "^7.0.15",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^20.19.27",
+    "@types/pg": "^8.18.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "concurrently": "^9.2.1",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^10.0.0",
-    "drizzle-kit": "^0.30.6",
+    "drizzle-kit": "^0.31.4",
     "electron-builder": "^25.0.0",
     "eslint": "^9.39.2",
     "eslint-config-next": "15.3.0",
@@ -177,7 +179,6 @@
   "lint-staged": {
     "*.{js,json,mjs,ts,yaml,tsx,css}": ["pnpm format", "pnpm lint:fix"]
   },
-  "packageManager": "pnpm@10.2.1",
   "engines": {
     "node": ">=18"
   },
@@ -185,7 +186,6 @@
     "onlyBuiltDependencies": [
       "@biomejs/biome",
       "@tailwindcss/oxide",
-      "better-sqlite3",
       "esbuild",
       "sharp",
       "unrs-resolver"

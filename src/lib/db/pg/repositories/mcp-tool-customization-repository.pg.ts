@@ -1,5 +1,5 @@
-import { pgDb as db } from "../../db.sqlite";
-import { McpServerTable, McpToolCustomizationTable } from "../../schema.sqlite";
+import { pgDb as db } from "../db.pg";
+import { McpServerTable, McpToolCustomizationTable } from "../schema.pg";
 import { and, eq } from "drizzle-orm";
 import type { McpToolCustomizationRepository } from "@/types/mcp";
 

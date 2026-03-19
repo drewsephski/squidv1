@@ -4,14 +4,14 @@ import {
   UserPreferences,
   UserRepository,
 } from "app-types/user";
-import { pgDb as db, pgDb } from "../../db.sqlite";
+import { pgDb as db, pgDb } from "../db.pg";
 import {
   AccountTable,
   ChatMessageTable,
   ChatThreadTable,
   SessionTable,
   UserTable,
-} from "../../schema.sqlite";
+} from "../schema.pg";
 import { count, eq, getTableColumns, sql } from "drizzle-orm";
 
 // Helper function to get user columns without password
@@ -24,7 +24,7 @@ export const pgUserRepository: UserRepository = {
   existsByEmail: async (email: string): Promise<boolean> => {
     const result = await db
       .select()
-      .from(UserTable)
+      .from(UserTable as any)
       .where(eq(UserTable.email, email));
     return result.length > 0;
   },
@@ -40,7 +40,7 @@ export const pgUserRepository: UserRepository = {
     email?: string;
   }): Promise<User> => {
     const [result] = await db
-      .update(UserTable)
+      .update(UserTable as any)
       .set({
         ...(name && { name }),
         ...(image && { image }),
@@ -49,10 +49,8 @@ export const pgUserRepository: UserRepository = {
       })
       .where(eq(UserTable.id, userId))
       .returning();
-    return {
-      ...result,
-      preferences: result.preferences,
-    };
+
+    return result as User;
   },
 
   updatePreferences: async (
@@ -60,22 +58,19 @@ export const pgUserRepository: UserRepository = {
     preferences: UserPreferences,
   ): Promise<User> => {
     const [result] = await db
-      .update(UserTable)
+      .update(UserTable as any)
       .set({
         preferences,
         updatedAt: new Date(),
       })
       .where(eq(UserTable.id, userId))
       .returning();
-    return {
-      ...result,
-      preferences: result.preferences ?? null,
-    };
+    return result as User;
   },
   getPreferences: async (userId: string) => {
     const [result] = await db
       .select({ preferences: UserTable.preferences })
-      .from(UserTable)
+      .from(UserTable as any)
       .where(eq(UserTable.id, userId));
     return result?.preferences ?? null;
   },
@@ -91,7 +86,7 @@ export const pgUserRepository: UserRepository = {
           WHERE ${SessionTable.userId} = ${UserTable.id}
         )`.as("lastLogin"),
       })
-      .from(UserTable)
+      .from(UserTable as any)
       .where(eq(UserTable.id, userId));
 
     return result || null;
@@ -113,9 +108,9 @@ export const pgUserRepository: UserRepository = {
         threadCount: sql<number>`COALESCE(COUNT(DISTINCT ${ChatThreadTable.id}), 0)`,
         messageCount: sql<number>`COALESCE(COUNT(${ChatMessageTable.id}), 0)`,
       })
-      .from(ChatThreadTable)
+      .from(ChatThreadTable as any)
       .leftJoin(
-        ChatMessageTable,
+        ChatMessageTable as any,
         eq(ChatThreadTable.id, ChatMessageTable.threadId),
       )
       .where(
@@ -129,9 +124,9 @@ export const pgUserRepository: UserRepository = {
         // Extract usage tokens from metadata
         totalTokens: sql<number>`COALESCE(SUM((${ChatMessageTable.metadata}->'usage'->>'totalTokens')::numeric), 0)`,
       })
-      .from(ChatMessageTable)
+      .from(ChatMessageTable as any)
       .leftJoin(
-        ChatThreadTable,
+        ChatThreadTable as any,
         eq(ChatMessageTable.threadId, ChatThreadTable.id),
       )
       .where(
@@ -167,7 +162,7 @@ export const pgUserRepository: UserRepository = {
       .select({
         providerId: AccountTable.providerId,
       })
-      .from(AccountTable)
+      .from(AccountTable as any)
       .where(eq(AccountTable.userId, userId));
 
     return {

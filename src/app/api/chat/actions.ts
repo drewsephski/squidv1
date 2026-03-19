@@ -143,8 +143,9 @@ export async function generateExampleToolSchemaAction(options: {
 export async function rememberMcpServerCustomizationsAction(userId: string) {
   const key = CacheKeys.mcpServerCustomizations(userId);
 
-  const cachedMcpServerCustomizations =
-    await serverCache.get<Record<string, McpServerCustomizationsPrompt>>(key);
+  const cachedMcpServerCustomizations = (await serverCache.get(key)) as
+    | Record<string, McpServerCustomizationsPrompt>
+    | undefined;
   if (cachedMcpServerCustomizations) {
     return cachedMcpServerCustomizations;
   }
@@ -218,7 +219,7 @@ export async function rememberAgentAction(
 ) {
   if (!agent) return undefined;
   const key = CacheKeys.agentInstructions(agent);
-  let cachedAgent = await serverCache.get<Agent | null>(key);
+  let cachedAgent = (await serverCache.get(key)) as Agent | null;
   if (!cachedAgent) {
     cachedAgent = await agentRepository.selectAgentById(agent, userId);
     await serverCache.set(key, cachedAgent);

@@ -2,15 +2,15 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { admin as adminPlugin } from "better-auth/plugins";
-import { pgDb } from "lib/db/db.sqlite";
+import { admin as adminPlugin } from "better-auth/plugins/admin";
+import { pgDb } from "lib/db/pg/db.pg";
 import { headers } from "next/headers";
 import {
   AccountTable,
   SessionTable,
   UserTable,
   VerificationTable,
-} from "lib/db/schema.sqlite";
+} from "lib/db/pg/schema.pg";
 import { getAuthConfig } from "./config";
 import logger from "logger";
 import { userRepository } from "lib/db/repository";

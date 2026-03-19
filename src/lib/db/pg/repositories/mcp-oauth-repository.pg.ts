@@ -1,6 +1,6 @@
 import { McpOAuthSession, McpOAuthRepository } from "app-types/mcp";
-import { pgDb as db } from "../../db.sqlite";
-import { McpOAuthSessionTable } from "../../schema.sqlite";
+import { pgDb as db } from "../db.pg";
+import { McpOAuthSessionTable } from "../schema.pg";
 import { eq, and, isNotNull, desc, isNull, ne } from "drizzle-orm";
 
 // OAuth repository implementation for multi-instance support

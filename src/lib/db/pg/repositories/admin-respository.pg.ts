@@ -3,8 +3,8 @@ import {
   AdminUsersQuery,
   AdminUsersPaginated,
 } from "app-types/admin";
-import { pgDb as db } from "../../db.sqlite";
-import { UserTable, SessionTable } from "../../schema.sqlite";
+import { pgDb as db } from "../db.pg";
+import { UserTable, SessionTable } from "../schema.pg";
 import {
   and,
   asc,

@@ -1,5 +1,5 @@
 // import { Logger } from "drizzle-orm";
-import { drizzle as drizzlePg } from "drizzle-orm/better-sqlite3";
+import { drizzle as drizzlePg } from "drizzle-orm/postgres-js";
 
 // class MyLogger implements Logger {
 //   logQuery(query: string, params: unknown[]): void {

@@ -1,11 +1,11 @@
 import { and, desc, eq, inArray, not, or, sql } from "drizzle-orm";
-import { pgDb } from "../../db.sqlite";
+import { pgDb } from "../db.pg";
 import {
   UserTable,
   WorkflowEdgeTable,
   WorkflowNodeDataTable,
   WorkflowTable,
-} from "../../schema.sqlite";
+} from "../schema.pg";
 import {
   DBWorkflow,
   DBEdge,
@@ -140,12 +140,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
     return true;
   },
   async delete(id) {
-    const result = await pgDb
-      .delete(WorkflowTable)
-      .where(eq(WorkflowTable.id, id));
-    if (result.rowCount === 0) {
-      throw new Error("Workflow not found");
-    }
+    await pgDb.delete(WorkflowTable).where(eq(WorkflowTable.id, id));
   },
   async selectByUserId(userId) {
     const rows = await pgDb

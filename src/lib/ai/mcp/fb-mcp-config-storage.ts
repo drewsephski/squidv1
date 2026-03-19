@@ -12,7 +12,7 @@ import equal from "lib/equal";
 import defaultLogger from "logger";
 import { MCP_CONFIG_PATH } from "lib/ai/mcp/config-path";
 import { colorize } from "consola/utils";
-import { McpServerTable } from "lib/db/schema.sqlite";
+import { McpServerTable } from "lib/db/pg/schema.pg";
 
 const logger = defaultLogger.withDefaults({
   message: colorize("gray", `MCP File Config Storage: `),

@@ -13,10 +13,11 @@ import { lookup as mimeLookup } from "mime-types";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   try {
-    const pathname = params.path.join("/");
+    const resolvedParams = await params;
+    const pathname = resolvedParams.path.join("/");
 
     // Basic path traversal protection
     const normalized = path.normalize(pathname);
@@ -28,7 +29,7 @@ export async function GET(
     const contentType = (mimeLookup(pathname) ||
       "application/octet-stream") as string;
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": contentType,
