@@ -125,7 +125,7 @@ export function EditWorkflowPopup({
           onOpenChange?.(false);
           mutate("/api/workflow");
           if (submitAfterRoute) {
-            router.push(`/workflow/${workflow.id}`);
+            router.push(`/chat/workflow/${workflow.id}`);
           }
           onSave?.(workflow);
         })

@@ -10,6 +10,9 @@ import {
 
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
+
 export const pgChatRepository: ChatRepository = {
   insertThread: async (
     thread: Omit<ChatThread, "createdAt">,
@@ -26,14 +29,14 @@ export const pgChatRepository: ChatRepository = {
   },
 
   deleteChatMessage: async (id: string): Promise<void> => {
-    await db.delete(ChatMessageTable).where(eq(ChatMessageTable.id, id));
+    await db.delete(ChatMessageTable).where(uuidEq(ChatMessageTable.id, id));
   },
 
   selectThread: async (id: string): Promise<ChatThread | null> => {
     const [result] = await db
       .select()
       .from(ChatThreadTable)
-      .where(eq(ChatThreadTable.id, id));
+      .where(uuidEq(ChatThreadTable.id, id));
     return result;
   },
 
@@ -45,7 +48,7 @@ export const pgChatRepository: ChatRepository = {
       .select()
       .from(ChatThreadTable)
       .leftJoin(UserTable, eq(ChatThreadTable.userId, UserTable.id))
-      .where(eq(ChatThreadTable.id, id));
+      .where(sql`${ChatThreadTable.id} = ${id}::uuid`);
 
     if (!thread) {
       return null;
@@ -68,7 +71,7 @@ export const pgChatRepository: ChatRepository = {
     const result = await db
       .select()
       .from(ChatMessageTable)
-      .where(eq(ChatMessageTable.threadId, threadId))
+      .where(uuidEq(ChatMessageTable.threadId, threadId))
       .orderBy(ChatMessageTable.createdAt);
     return result as ChatMessage[];
   },
@@ -95,7 +98,7 @@ export const pgChatRepository: ChatRepository = {
         ChatMessageTable,
         eq(ChatThreadTable.id, ChatMessageTable.threadId),
       )
-      .where(eq(ChatThreadTable.userId, userId))
+      .where(sql`${ChatThreadTable.userId} = ${userId}::uuid`)
       .groupBy(ChatThreadTable.id)
       .orderBy(desc(sql`last_message_at`));
 
@@ -121,7 +124,7 @@ export const pgChatRepository: ChatRepository = {
       .set({
         title: thread.title,
       })
-      .where(eq(ChatThreadTable.id, id))
+      .where(sql`${ChatThreadTable.id} = ${id}::uuid`)
       .returning();
     return result;
   },
@@ -143,13 +146,17 @@ export const pgChatRepository: ChatRepository = {
 
   deleteThread: async (id: string): Promise<void> => {
     // 1. Delete all messages in the thread
-    await db.delete(ChatMessageTable).where(eq(ChatMessageTable.threadId, id));
+    await db
+      .delete(ChatMessageTable)
+      .where(uuidEq(ChatMessageTable.threadId, id));
 
     // 2. Remove thread from all archives
-    await db.delete(ArchiveItemTable).where(eq(ArchiveItemTable.itemId, id));
+    await db
+      .delete(ArchiveItemTable)
+      .where(uuidEq(ArchiveItemTable.itemId, id));
 
     // 3. Delete the thread itself
-    await db.delete(ChatThreadTable).where(eq(ChatThreadTable.id, id));
+    await db.delete(ChatThreadTable).where(uuidEq(ChatThreadTable.id, id));
   },
 
   insertMessage: async (
@@ -189,7 +196,7 @@ export const pgChatRepository: ChatRepository = {
     const [message] = await db
       .select()
       .from(ChatMessageTable)
-      .where(eq(ChatMessageTable.id, messageId));
+      .where(uuidEq(ChatMessageTable.id, messageId));
     if (!message) {
       return;
     }
@@ -198,7 +205,7 @@ export const pgChatRepository: ChatRepository = {
       .delete(ChatMessageTable)
       .where(
         and(
-          eq(ChatMessageTable.threadId, message.threadId),
+          uuidEq(ChatMessageTable.threadId, message.threadId),
           gte(ChatMessageTable.createdAt, message.createdAt),
         ),
       );
@@ -208,7 +215,7 @@ export const pgChatRepository: ChatRepository = {
     const threadIds = await db
       .select({ id: ChatThreadTable.id })
       .from(ChatThreadTable)
-      .where(eq(ChatThreadTable.userId, userId));
+      .where(uuidEq(ChatThreadTable.userId, userId));
     await Promise.all(
       threadIds.map((threadId) => pgChatRepository.deleteThread(threadId.id)),
     );
@@ -224,7 +231,7 @@ export const pgChatRepository: ChatRepository = {
       )
       .where(
         and(
-          eq(ChatThreadTable.userId, userId),
+          uuidEq(ChatThreadTable.userId, userId),
           sql`${ArchiveItemTable.id} IS NULL`,
         ),
       );
@@ -253,7 +260,10 @@ export const pgChatRepository: ChatRepository = {
       })
       .from(ChatThreadTable)
       .where(
-        and(eq(ChatThreadTable.id, id), eq(ChatThreadTable.userId, userId)),
+        and(
+          uuidEq(ChatThreadTable.id, id),
+          uuidEq(ChatThreadTable.userId, userId),
+        ),
       );
     return Boolean(result);
   },

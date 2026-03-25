@@ -106,7 +106,7 @@ export default function EmailSignUp({
     ).unwrap();
     if (success) {
       toast.success(message);
-      router.push("/");
+      router.push("/chat");
     } else {
       toast.error(message);
     }

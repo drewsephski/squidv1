@@ -84,7 +84,7 @@ export function AppSidebarAgents({ userRole }: { userRole?: string | null }) {
           };
         });
       } else {
-        router.push("/");
+        router.push("/chat");
 
         appStore.setState(() => ({
           pendingThreadMention: newMention,
@@ -100,14 +100,14 @@ export function AppSidebarAgents({ userRole }: { userRole?: string | null }) {
         <SidebarMenu className="group/agents" data-testid="agents-sidebar-menu">
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="font-semibold">
-              <Link href="/agents" data-testid="agents-link">
+              <Link href="/chat/agents" data-testid="agents-link">
                 {t("Layout.agents")}
               </Link>
             </SidebarMenuButton>
             {canCreateAgent(userRole) && (
               <SidebarMenuAction
                 className="group-hover/agents:opacity-100 opacity-0 transition-opacity"
-                onClick={() => router.push("/agent/new")}
+                onClick={() => router.push("/chat/agent/new")}
                 data-testid="sidebar-create-agent-button"
               >
                 <Tooltip>

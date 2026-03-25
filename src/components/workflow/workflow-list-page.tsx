@@ -99,7 +99,7 @@ export default function WorkflowListPage({
   }) => {
     const workflowId = await createWithExample(exampleWorkflow);
     mutate("/api/workflow");
-    router.push(`/workflow/${workflowId}`);
+    router.push(`/chat/workflow/${workflowId}`);
   };
 
   const updateVisibility = async (
@@ -127,8 +127,14 @@ export default function WorkflowListPage({
   };
 
   const deleteWorkflow = async (workflowId: string) => {
+    const workflow = workflows?.find((w) => w.id === workflowId);
     const ok = await notify.confirm({
-      description: t("Workflow.deleteConfirm"),
+      title: "Delete Workflow",
+      description: workflow
+        ? `Are you sure you want to delete "${workflow.name}"? This action cannot be undone.`
+        : t("Workflow.deleteConfirm"),
+      okText: "Delete",
+      cancelText: "Cancel",
     });
     if (!ok) return;
 
@@ -250,7 +256,7 @@ export default function WorkflowListPage({
                     key={workflow.id}
                     type="workflow"
                     item={workflow}
-                    href={`/workflow/${workflow.id}`}
+                    href={`/chat/workflow/${workflow.id}`}
                     onVisibilityChange={
                       canCreate && workflow.userId === currentUserId
                         ? updateVisibility

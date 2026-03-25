@@ -171,7 +171,7 @@ export default function EditAgent({
         .ifOk((updatedAgent) => {
           mutateAgents(updatedAgent);
           toast.success(t("Agent.updated"));
-          router.push(`/agents`);
+          router.push(`/chat/agents`);
         })
         .ifFail(handleErrorWithToast)
         .watch(() => setIsSaving(false));
@@ -188,7 +188,7 @@ export default function EditAgent({
         .ifOk((updatedAgent) => {
           mutateAgents(updatedAgent);
           toast.success(t("Agent.created"));
-          router.push(`/agents`);
+          router.push(`/chat/agents`);
         })
         .ifFail(handleErrorWithToast)
         .watch(() => setIsSaving(false));
