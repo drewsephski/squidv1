@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { TextShimmer } from "ui/text-shimmer";
 import { buildReturnUrl } from "lib/admin/navigation-utils";
 import { BackButton } from "@/components/layouts/back-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function AppHeader() {
   const t = useTranslations();
@@ -96,6 +97,7 @@ export function AppHeader() {
       <div className="flex-1" />
       {showActionButtons && (
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
