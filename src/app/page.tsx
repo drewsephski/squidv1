@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { NavFlowPro } from "@/components/navigation/nav-flow-pro";
+import { Navbar } from "@/components/navbar";
 import { AsanaIcon } from "@/components/ui/asana-icon";
 import { AtlassianIcon } from "@/components/ui/atlassian-icon";
 import { CanvaIcon } from "@/components/ui/canva-icon";
@@ -23,7 +23,6 @@ import { PaypalIcon } from "@/components/ui/paypal-icon";
 import { PlaywrightIcon } from "@/components/ui/playwright-icon";
 import { StripeIcon } from "@/components/ui/stripe-icon";
 import { WriteIcon } from "@/components/ui/write-icon";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export const dynamic = "force-dynamic";
 
@@ -714,63 +713,8 @@ function IconUsers() {
 }
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
-function Navbar() {
-  return (
-    <div className="relative">
-      <NavFlowPro
-        logoText="Squid"
-        logoLink="/"
-        indicatorType="pill"
-        showCta={true}
-        ctaLabel="Get started"
-        ctaLink="/sign-up"
-        ctaStyle="filled"
-        sticky={true}
-        compactOnScroll={true}
-        navHeight={66}
-        horizontalPadding="px-8"
-        navItems={[
-          {
-            id: "platform",
-            label: "Platform",
-            href: "#platform",
-            dropdownType: "links",
-            columns: [
-              "Chat: New Chat|/chat, Agents|/agents",
-              "Admin: MCP|/mcp, Workflows|/workflows",
-            ],
-          },
-          {
-            id: "integrations",
-            label: "Integrations",
-            href: "#integrations",
-            dropdownType: "links",
-            columns: [
-              "Authentication: Sign In|/sign-in, Sign Up|/sign-up",
-              "Tools: Agents|/agents, MCP Dashboard|/mcp",
-            ],
-          },
-          {
-            id: "docs",
-            label: "Docs",
-            href: "#docs",
-            dropdownType: "none",
-          },
-          {
-            id: "pricing",
-            label: "Pricing",
-            href: "#pricing",
-            dropdownType: "none",
-          },
-        ]}
-        onItemClick={(item) => console.log("Nav item clicked:", item)}
-        onCtaClick={() => console.log("CTA clicked")}
-      />
-      <div className="fixed top-2 right-28 z-50">
-        <ThemeToggle />
-      </div>
-    </div>
-  );
+function NavbarWrapper() {
+  return <Navbar />;
 }
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -1138,7 +1082,7 @@ export default function LandingPage() {
       />
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div className="lp" ref={ref}>
-        <Navbar />
+        <NavbarWrapper />
         <Hero />
         <Trust />
         <Bento />
