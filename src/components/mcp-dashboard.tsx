@@ -80,7 +80,7 @@ export default function MCPDashboard({ message, user }: MCPDashboardProps) {
     const params = new URLSearchParams();
     params.set("name", mcp.name);
     params.set("config", JSON.stringify(mcp.config));
-    router.push(`/mcp/create?${params.toString()}`);
+    router.push(`/chat/mcp/create?${params.toString()}`);
   };
 
   const particle = useMemo(() => {

@@ -152,7 +152,7 @@ export default function MCPEditor({
       .ifOk(() => {
         toast.success(t("MCP.configurationSavedSuccessfully"));
         mutate("/api/mcp/list");
-        router.push("/mcp");
+        router.push("/chat/mcp");
       })
       .ifFail(handleErrorWithToast)
       .watch(() => setIsLoading(false));

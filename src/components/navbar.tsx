@@ -1,20 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { authClient } from "lib/auth/client";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const navItems = [
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await authClient.getSession();
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const publicNavItems = [
     { label: "Platform", href: "#platform" },
     { label: "Integrations", href: "#integrations" },
     { label: "Docs", href: "#docs" },
     { label: "Pricing", href: "#pricing" },
   ];
+
+  const authenticatedNavItems = [
+    { label: "Chat", href: "/chat" },
+    { label: "Agents", href: "/chat/agents" },
+    { label: "Workflows", href: "/chat/workflow" },
+    { label: "MCPs", href: "/chat/mcp" },
+    { label: "Archive", href: "/chat/archive" },
+  ];
+
+  const navItems = isAuthenticated ? authenticatedNavItems : publicNavItems;
+
+  const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isAuthenticated && !isLoading) {
+      e.preventDefault();
+      window.location.href = "/sign-in";
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
@@ -47,6 +82,7 @@ export function Navbar() {
                 key={item.label}
                 href={item.href}
                 className="text-muted-foreground hover:text-foreground transition-colors"
+                onClick={(e) => handleProtectedLink(e)}
               >
                 {item.label}
               </Link>
@@ -56,9 +92,13 @@ export function Navbar() {
           {/* Right side items */}
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <Button className="hidden sm:inline-flex" asChild>
-              <Link href="/sign-up">Get started</Link>
-            </Button>
+            {!isLoading && (
+              <Button className="hidden sm:inline-flex" asChild>
+                <Link href={isAuthenticated ? "/chat" : "/sign-up"}>
+                  {isAuthenticated ? "Go to Chat" : "Get started"}
+                </Link>
+              </Button>
+            )}
 
             {/* Mobile menu button */}
             <Button
@@ -85,14 +125,19 @@ export function Navbar() {
                   key={item.label}
                   href={item.href}
                   className="block px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    handleProtectedLink(e);
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
                   {item.label}
                 </Link>
               ))}
               <div className="pt-2">
                 <Button className="w-full" asChild>
-                  <Link href="/sign-up">Get started</Link>
+                  <Link href={isAuthenticated ? "/chat" : "/sign-up"}>
+                    {isAuthenticated ? "Go to Chat" : "Get started"}
+                  </Link>
                 </Button>
               </div>
             </div>

@@ -6,8 +6,11 @@ import {
 } from "app-types/archive";
 import { pgDb as db } from "../db.pg";
 import { ArchiveTable, ArchiveItemTable } from "../schema.pg";
-import { and, eq, count } from "drizzle-orm";
+import { and, eq, count, sql } from "drizzle-orm";
 import { generateUUID } from "lib/utils";
+
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
 
 export const pgArchiveRepository: ArchiveRepository = {
   async createArchive(archive) {
@@ -55,7 +58,7 @@ export const pgArchiveRepository: ArchiveRepository = {
     const [result] = await db
       .select()
       .from(ArchiveTable)
-      .where(eq(ArchiveTable.id, id));
+      .where(uuidEq(ArchiveTable.id, id));
     return result as Archive | null;
   },
 
@@ -67,14 +70,16 @@ export const pgArchiveRepository: ArchiveRepository = {
         description: archive.description,
         updatedAt: new Date(),
       })
-      .where(eq(ArchiveTable.id, id))
+      .where(uuidEq(ArchiveTable.id, id))
       .returning();
     return result as Archive;
   },
 
   async deleteArchive(id) {
-    await db.delete(ArchiveItemTable).where(eq(ArchiveItemTable.archiveId, id));
-    await db.delete(ArchiveTable).where(eq(ArchiveTable.id, id));
+    await db
+      .delete(ArchiveItemTable)
+      .where(uuidEq(ArchiveItemTable.archiveId, id));
+    await db.delete(ArchiveTable).where(uuidEq(ArchiveTable.id, id));
   },
 
   async addItemToArchive(archiveId, itemId, userId) {

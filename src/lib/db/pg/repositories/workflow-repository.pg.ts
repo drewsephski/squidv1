@@ -21,6 +21,9 @@ import {
 } from "lib/ai/workflow/shared.workflow";
 import { ObjectJsonSchema7 } from "app-types/util";
 
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
+
 export const pgWorkflowRepository: WorkflowRepository = {
   async selectToolByIds(ids) {
     if (!ids.length) return [];
@@ -41,7 +44,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
       )
       .where(
         and(
-          inArray(WorkflowTable.id, ids),
+          sql`${WorkflowTable.id} = any(${ids.map((id) => sql`${id}::uuid`)})`,
           eq(WorkflowTable.isPublished, true),
         ),
       );
@@ -117,7 +120,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
     const [workflow] = await pgDb
       .select()
       .from(WorkflowTable)
-      .where(eq(WorkflowTable.id, id));
+      .where(uuidEq(WorkflowTable.id, id));
     return workflow as DBWorkflow;
   },
 
@@ -128,7 +131,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
         userId: WorkflowTable.userId,
       })
       .from(WorkflowTable)
-      .where(and(eq(WorkflowTable.id, workflowId)));
+      .where(and(uuidEq(WorkflowTable.id, workflowId)));
     if (!workflow) {
       return false;
     }
@@ -140,13 +143,13 @@ export const pgWorkflowRepository: WorkflowRepository = {
     return true;
   },
   async delete(id) {
-    await pgDb.delete(WorkflowTable).where(eq(WorkflowTable.id, id));
+    await pgDb.delete(WorkflowTable).where(uuidEq(WorkflowTable.id, id));
   },
   async selectByUserId(userId) {
     const rows = await pgDb
       .select()
       .from(WorkflowTable)
-      .where(eq(WorkflowTable.userId, userId))
+      .where(uuidEq(WorkflowTable.userId, userId))
       .orderBy(desc(WorkflowTable.createdAt));
     return rows as DBWorkflow[];
   },
@@ -155,7 +158,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
       ? await pgDb
           .select({ id: WorkflowTable.id })
           .from(WorkflowTable)
-          .where(eq(WorkflowTable.id, workflow.id))
+          .where(uuidEq(WorkflowTable.id, workflow.id))
       : null;
     const isNew = !prev;
     const [row] = await pgDb
@@ -188,7 +191,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
           .delete(WorkflowNodeDataTable)
           .where(
             and(
-              eq(WorkflowNodeDataTable.workflowId, workflowId),
+              uuidEq(WorkflowNodeDataTable.workflowId, workflowId),
               inArray(WorkflowNodeDataTable.id, deleteNodes),
             ),
           );
@@ -199,7 +202,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
           .delete(WorkflowEdgeTable)
           .where(
             and(
-              eq(WorkflowEdgeTable.workflowId, workflowId),
+              uuidEq(WorkflowEdgeTable.workflowId, workflowId),
               inArray(WorkflowEdgeTable.id, deleteEdges),
             ),
           );
@@ -237,16 +240,16 @@ export const pgWorkflowRepository: WorkflowRepository = {
     const [workflow] = await pgDb
       .select()
       .from(WorkflowTable)
-      .where(eq(WorkflowTable.id, id));
+      .where(uuidEq(WorkflowTable.id, id));
 
     if (!workflow) return null;
 
     const nodeWhere = opt?.ignoreNote
       ? and(
-          eq(WorkflowNodeDataTable.workflowId, id),
+          uuidEq(WorkflowNodeDataTable.workflowId, id),
           not(eq(WorkflowNodeDataTable.kind, NodeKind.Note)),
         )
-      : eq(WorkflowNodeDataTable.workflowId, id);
+      : uuidEq(WorkflowNodeDataTable.workflowId, id);
 
     const nodePromises = pgDb
       .select()
@@ -255,7 +258,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
     const edgePromises = pgDb
       .select()
       .from(WorkflowEdgeTable)
-      .where(eq(WorkflowEdgeTable.workflowId, id));
+      .where(uuidEq(WorkflowEdgeTable.workflowId, id));
     const [nodes, edges] = await Promise.all([nodePromises, edgePromises]);
     return {
       ...(workflow as DBWorkflow),

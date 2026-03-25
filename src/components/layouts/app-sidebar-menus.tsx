@@ -51,11 +51,11 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
           <Tooltip>
             <SidebarMenuItem className="mb-1">
               <Link
-                href="/"
+                href="/chat"
                 onClick={(e) => {
                   e.preventDefault();
                   setOpenMobile(false);
-                  router.push(`/`);
+                  router.push(`/chat`);
                   router.refresh();
                 }}
               >
@@ -80,7 +80,7 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
         <SidebarMenu>
           <Tooltip>
             <SidebarMenuItem>
-              <Link href="/mcp">
+              <Link href="/chat/mcp">
                 <SidebarMenuButton className="font-semibold">
                   <MCPIcon className="size-4 fill-accent-foreground" />
                   {t("Layout.mcpConfiguration")}
@@ -92,7 +92,7 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
         <SidebarMenu>
           <Tooltip>
             <SidebarMenuItem>
-              <Link href="/workflow">
+              <Link href="/chat/workflow">
                 <SidebarMenuButton className="font-semibold">
                   <Waypoints className="size-4" />
                   {t("Layout.workflow")}
@@ -150,7 +150,7 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
                   archives!.map((archive) => (
                     <SidebarMenuSubItem
                       onClick={() => {
-                        router.push(`/archive/${archive.id}`);
+                        router.push(`/chat/archive/${archive.id}`);
                       }}
                       key={archive.id}
                       className="cursor-pointer"

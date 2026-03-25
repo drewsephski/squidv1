@@ -20,6 +20,9 @@ const getUserColumnsWithoutPassword = () => {
   return userColumns;
 };
 
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
+
 export const pgUserRepository: UserRepository = {
   existsByEmail: async (email: string): Promise<boolean> => {
     const result = await db
@@ -47,7 +50,7 @@ export const pgUserRepository: UserRepository = {
         ...(email && { email }),
         updatedAt: new Date(),
       })
-      .where(eq(UserTable.id, userId))
+      .where(uuidEq(UserTable.id, userId))
       .returning();
 
     return result as User;
@@ -63,7 +66,7 @@ export const pgUserRepository: UserRepository = {
         preferences,
         updatedAt: new Date(),
       })
-      .where(eq(UserTable.id, userId))
+      .where(uuidEq(UserTable.id, userId))
       .returning();
     return result as User;
   },
@@ -71,7 +74,7 @@ export const pgUserRepository: UserRepository = {
     const [result] = await db
       .select({ preferences: UserTable.preferences })
       .from(UserTable as any)
-      .where(eq(UserTable.id, userId));
+      .where(uuidEq(UserTable.id, userId));
     return result?.preferences ?? null;
   },
   getUserById: async (
@@ -87,7 +90,7 @@ export const pgUserRepository: UserRepository = {
         )`.as("lastLogin"),
       })
       .from(UserTable as any)
-      .where(eq(UserTable.id, userId));
+      .where(uuidEq(UserTable.id, userId));
 
     return result || null;
   },
@@ -163,7 +166,7 @@ export const pgUserRepository: UserRepository = {
         providerId: AccountTable.providerId,
       })
       .from(AccountTable as any)
-      .where(eq(AccountTable.userId, userId));
+      .where(uuidEq(AccountTable.userId, userId));
 
     return {
       hasPassword: accounts.some((a) => a.providerId === "credential"),
