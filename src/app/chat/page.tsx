@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const session = await getSession();
   if (!session) {
-    redirect("/sign-in");
+    redirect("/");
   }
   const id = generateUUID();
   return (

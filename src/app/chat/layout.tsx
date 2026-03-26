@@ -16,7 +16,7 @@ async function AuthenticatedLayout({
 }: { children: React.ReactNode }) {
   const session = await getSession();
   if (!session) {
-    redirect("/sign-in");
+    redirect("/");
   }
 
   const cookieStore = await cookies();
