@@ -21,7 +21,11 @@ export async function GET(
   }
 
   try {
-    const { readFile } = await import("@/lib/file-storage/storage.local");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const storageModule: any = await import(
+      "./../../../../lib/file-storage/storage.local"
+    );
+    const { readFile } = storageModule;
     const resolvedParams = await params;
     const pathname = resolvedParams.path.join("/");
 

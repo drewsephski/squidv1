@@ -16,6 +16,7 @@ const createCache = () => {
   if (isDesktop) {
     logger.info("Using LocalCache for desktop mode");
     try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
       const { cache } = require("./cache.local");
       return cache;
     } catch {
