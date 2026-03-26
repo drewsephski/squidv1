@@ -33,7 +33,7 @@
     "addOption": "Add Option",
     "tool": "Tool",
     "selectTool": "Select Tool...",
-    "noResults": "No results.",
+    "noResults": "No results found. Try a different search.",
     "generateWithAI": "Generate With AI",
     "generateInputWithAI": "Generate Input With AI",
     "generatingInputWithAI": "Generating input with AI...",

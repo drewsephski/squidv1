@@ -117,8 +117,8 @@ export async function POST(
           if (result.endedAt) {
             await workflowRunRepository.update(workflowRun.id, {
               status: result.isOk ? "completed" : "failed",
-              output: JSON.stringify(result.output),
-              error: result.error ? JSON.stringify(result.error) : undefined,
+              output: result.output,
+              error: result.error,
               endedAt: new Date(),
             });
           }

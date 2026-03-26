@@ -6,7 +6,6 @@ import {
   NodeRuntimeHistory,
   NodeKind,
 } from "lib/ai/workflow/workflow.interface";
-import { UIMessage } from "ai";
 import { cn } from "lib/utils";
 import { NodeIcon } from "./node-icon";
 import { TextShimmer } from "ui/text-shimmer";
@@ -46,7 +45,7 @@ const messageVariants = {
     scale: 1,
     transition: {
       duration: 0.3,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
     },
   },
   exit: {

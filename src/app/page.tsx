@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { AsanaIcon } from "@/components/ui/asana-icon";
 import { AtlassianIcon } from "@/components/ui/atlassian-icon";
@@ -22,7 +20,14 @@ import { OpenRouterIcon } from "@/components/ui/open-router-icon";
 import { PaypalIcon } from "@/components/ui/paypal-icon";
 import { PlaywrightIcon } from "@/components/ui/playwright-icon";
 import { StripeIcon } from "@/components/ui/stripe-icon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { WriteIcon } from "@/components/ui/write-icon";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -277,7 +282,7 @@ const css = `
   }
 
   /* ════════════════════════════════════
-     BENTO GRID
+     BENTO GRID — Unified cohesive design
   ════════════════════════════════════ */
   .lp-bento-section {
     padding: 72px 40px 80px;
@@ -287,30 +292,64 @@ const css = `
   .lp-bento {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: 12px;
+    gap: 16px;
   }
 
-  /* Card base */
+  /* Card base — unified glass-morphism treatment */
   .lp-bc {
-    border-radius: var(--radius, 10px);
+    border-radius: var(--radius, 12px);
     border: 1px solid var(--border);
     background: var(--card);
-    padding: 24px;
+    padding: 28px;
     overflow: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    /* Subtle warm gradient for cohesion with site design */
+    background-image: linear-gradient(
+      175deg,
+      color-mix(in oklch, var(--card) 100%, transparent) 0%,
+      color-mix(in oklch, var(--card) 99%, var(--foreground) 1%) 60%,
+      color-mix(in oklch, var(--card) 97%, var(--foreground) 3%) 100%
+    );
+  }
+  .lp-bc::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 70% 40% at 50% 0%,
+      color-mix(in oklch, var(--primary) 6%, transparent) 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+    z-index: 0;
   }
   .lp-bc:hover {
-    border-color: var(--ring);
-    box-shadow: 0 4px 24px oklch(0 0 0 / 0.10);
-    transform: translateY(-2px);
+    border-color: color-mix(in oklch, var(--ring) 50%, var(--border) 50%);
+    box-shadow:
+      0 4px 12px oklch(0 0 0 / 0.05),
+      0 16px 48px oklch(0 0 0 / 0.08);
+    transform: translateY(-4px);
   }
-  .lp-bc-tint-primary {
-    background: color-mix(in oklch, var(--card) 90%, var(--primary) 10%);
+
+  /* Accent tints — subtle primary highlights for featured cards */
+  .lp-bc-accent {
+    background-image: linear-gradient(
+      175deg,
+      color-mix(in oklch, var(--card) 100%, transparent) 0%,
+      color-mix(in oklch, var(--card) 98%, var(--primary) 2%) 50%,
+      color-mix(in oklch, var(--card) 94%, var(--primary) 6%) 100%
+    );
   }
-  .lp-bc-tint-secondary { background: var(--secondary); }
+  .lp-bc-accent::before {
+    background: radial-gradient(
+      ellipse 70% 40% at 50% 0%,
+      color-mix(in oklch, var(--primary) 12%, transparent) 0%,
+      transparent 65%
+    );
+  }
 
   /* Grid columns — Row 1: 5+7, Row 2: 4+4+4 */
   .lp-bc1 { grid-column: span 5; }
@@ -319,34 +358,45 @@ const css = `
   .lp-bc4 { grid-column: span 4; }
   .lp-bc5 { grid-column: span 4; }
 
-  /* Chips */
+  /* Chips — unified with subtle color coding */
   .lp-chip {
     display: inline-flex; align-items: center;
-    padding: 3px 10px; border-radius: 9999px;
+    padding: 4px 12px; border-radius: 9999px;
     font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
     width: fit-content; flex-shrink: 0; margin-bottom: 16px;
+    position: relative; z-index: 1;
+    transition: transform 0.2s ease;
   }
+  .lp-chip:hover { transform: scale(1.02); }
   .lp-chip-a {
-    background: color-mix(in oklch, var(--primary) 11%, transparent);
+    background: color-mix(in oklch, var(--primary) 12%, transparent);
     color: var(--primary);
-    border: 1px solid color-mix(in oklch, var(--primary) 22%, transparent);
+    border: 1px solid color-mix(in oklch, var(--primary) 25%, transparent);
   }
   .lp-chip-b {
-    background: var(--secondary); color: var(--muted-foreground);
+    background: color-mix(in oklch, var(--muted-foreground) 10%, var(--card));
+    color: var(--muted-foreground);
     border: 1px solid var(--border);
   }
+  .lp-chip-c {
+    background: color-mix(in oklch, oklch(0.65 0.18 155) 12%, transparent);
+    color: oklch(0.45 0.14 155);
+    border: 1px solid color-mix(in oklch, oklch(0.65 0.18 155) 25%, transparent);
+  }
+  .dark .lp-chip-c { color: oklch(0.75 0.14 155); }
 
-  /* Status pill */
+  /* Status pill — unified with live indicator */
   .lp-status-pill {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 3px 10px; border-radius: 9999px;
+    padding: 4px 12px; border-radius: 9999px;
     font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
-    background: color-mix(in oklch, oklch(0.65 0.18 155) 10%, transparent);
-    color: oklch(0.38 0.14 155);
-    border: 1px solid color-mix(in oklch, oklch(0.65 0.18 155) 20%, transparent);
+    background: color-mix(in oklch, oklch(0.65 0.18 155) 12%, transparent);
+    color: oklch(0.45 0.14 155);
+    border: 1px solid color-mix(in oklch, oklch(0.65 0.18 155) 25%, transparent);
     width: fit-content; margin-bottom: 16px;
+    position: relative; z-index: 1;
   }
-  .dark .lp-status-pill { color: oklch(0.72 0.18 155); }
+  .dark .lp-status-pill { color: oklch(0.75 0.14 155); }
   .lp-status-dot {
     width: 6px; height: 6px; border-radius: 50%;
     background: oklch(0.65 0.18 155);
@@ -356,17 +406,19 @@ const css = `
   /* Card title + body */
   .lp-bc-title {
     font-family: 'Instrument Serif', serif;
-    font-size: clamp(19px, 1.9vw, 25px);
+    font-size: clamp(20px, 2vw, 26px);
     font-weight: 400; letter-spacing: -0.025em; line-height: 1.2;
     color: var(--foreground);
+    position: relative; z-index: 1;
   }
   .lp-bc-title em { font-style: italic; color: var(--primary); }
-  .lp-bc1 .lp-bc-title { font-size: clamp(22px, 2.2vw, 29px); }
+  .lp-bc1 .lp-bc-title { font-size: clamp(24px, 2.4vw, 32px); }
   .lp-bc-body {
-    font-size: 13px; color: var(--muted-foreground); line-height: 1.65; margin-top: 8px;
+    font-size: 13.5px; color: var(--muted-foreground); line-height: 1.7; margin-top: 10px;
+    position: relative; z-index: 1;
   }
 
-  /* ── Illustration container — fixed height, never overflows ── */
+  /* Illustration container — enhanced with consistent styling */
   .lp-bc-img {
     margin-top: 20px;
     border-radius: calc(var(--radius, 10px) - 2px);
@@ -376,20 +428,57 @@ const css = `
     height: 148px;
     object-fit: cover;
     border-radius: 8px;
+    /* Enhanced inner shadow for depth */
+    box-shadow:
+      inset 0 2px 6px oklch(0 0 0 / 0.1),
+      inset 0 -1px 2px oklch(0 0 0 / 0.05);
+    position: relative;
+    z-index: 1;
+    border: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
   }
-  .lp-bc1 .lp-bc-img { height: 140px; }
-  .lp-bc2 .lp-bc-img { height: 200px; }
+  /* Refined dot grid pattern */
+  .lp-bc-img::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background-image: radial-gradient(
+      circle at center,
+      color-mix(in oklch, var(--muted-foreground) 12%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 14px 14px;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .lp-bc1 .lp-bc-img,
+  .lp-bc2 .lp-bc-img,
   .lp-bc3 .lp-bc-img,
   .lp-bc4 .lp-bc-img,
-  .lp-bc5 .lp-bc-img { height: 136px; }
+  .lp-bc5 .lp-bc-img { height: 148px; }
 
   .lp-bc-img img {
     width: auto; height: 100%; max-width: 100%;
-    border-radius: 8px;
+    border-radius: 6px;
+    filter: drop-shadow(0 4px 12px oklch(0 0 0 / 0.4));
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  .lp-bc:hover .lp-bc-img img {
+    transform: scale(1.02);
+    filter: drop-shadow(0 6px 16px oklch(0 0 0 / 0.5));
   }
 
   /* Integration icon grid */
-  .lp-int-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+  .lp-int-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 16px;
+    align-items: center;
+  }
   .lp-int-icon {
     width: 32px; height: 32px; border-radius: 7px;
     border: 1px solid var(--border); background: var(--card);
@@ -409,6 +498,12 @@ const css = `
     color: var(--primary); font-size: 10px; font-weight: 600;
     border: 1px solid color-mix(in oklch, var(--primary) 20%, transparent);
     display: grid; place-items: center; flex-shrink: 0;
+    cursor: help;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .lp-int-more:hover {
+    transform: scale(1.08);
+    background: color-mix(in oklch, var(--primary) 15%, transparent);
   }
 
   /* Code block */
@@ -559,11 +654,12 @@ const css = `
     .lp-bento-section, .lp-features, .lp-cta, .lp-footer {
       padding-left: 24px; padding-right: 24px;
     }
+    .lp-bento { gap: 14px; }
     .lp-bento { grid-template-columns: 1fr 1fr; }
     .lp-bc1, .lp-bc2 { grid-column: span 2; }
     .lp-bc3, .lp-bc4 { grid-column: span 1; }
     .lp-bc5 { grid-column: span 2; }
-    .lp-bc3 .lp-bc-img, .lp-bc4 .lp-bc-img { height: 120px; }
+    .lp-bc { padding: 24px; }
   }
 
   @media (max-width: 768px) {
@@ -579,7 +675,7 @@ const css = `
     .lp-bc1, .lp-bc2, .lp-bc3, .lp-bc4, .lp-bc5 { grid-column: span 1; }
     .lp-bc1 .lp-bc-img, .lp-bc2 .lp-bc-img,
     .lp-bc3 .lp-bc-img, .lp-bc4 .lp-bc-img,
-    .lp-bc5 .lp-bc-img { height: 128px; }
+    .lp-bc5 .lp-bc-img { height: 148px; }
     .lp-features-grid { grid-template-columns: 1fr; }
     .lp-feature:nth-child(n)         { border-right: none; border-bottom: 1px solid var(--border); }
     .lp-feature:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
@@ -744,9 +840,6 @@ function Hero() {
         <Link href="/sign-up" className="lp-btn-primary">
           Get started free <IconArrow />
         </Link>
-        <Link href="#" className="lp-btn-outline">
-          View documentation
-        </Link>
       </div>
       <div className="lp-stats">
         {stats.map((s, i) => (
@@ -793,7 +886,7 @@ function Trust() {
   return (
     <div className="lp-trust lp-reveal">
       <p className="lp-trust-label">
-        Compatible with popular softwares, AI models, and frameworks
+        Compatible with popular software, AI models, and frameworks
       </p>
       <div className="lp-trust-track-wrap">
         <div className="lp-trust-track">
@@ -825,8 +918,8 @@ function Bento() {
       </div>
 
       <div className="lp-bento lp-reveal">
-        {/* Card 1 — Connect (5 col): text + icon grid + image */}
-        <div className="lp-bc lp-bc1 lp-bc-tint-primary">
+        {/* Card 1 — Connect (5 col): featured card with accent treatment */}
+        <div className="lp-bc lp-bc1 lp-bc-accent">
           <div className="lp-chip lp-chip-a">Connect</div>
           <div className="lp-bc-title">
             Connect agents
@@ -856,7 +949,14 @@ function Bento() {
             <div className="lp-int-icon">
               <LinearIcon className="w-5 h-5" />
             </div>
-            <div className="lp-int-more">+94</div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="lp-int-more">+94</div>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>94 more integrations available</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="lp-bc-img">
             <img
@@ -867,8 +967,8 @@ function Bento() {
           </div>
         </div>
 
-        {/* Card 2 — Auth + code (7 col): differentiating code block */}
-        <div className="lp-bc lp-bc2">
+        {/* Card 2 — Auth (7 col): accent treatment for visual balance */}
+        <div className="lp-bc lp-bc2 lp-bc-accent">
           <div className="lp-status-pill">
             <span className="lp-status-dot" /> Live execution
           </div>
@@ -886,8 +986,8 @@ function Bento() {
           </div>
         </div>
 
-        {/* Card 3 — Automate (4 col) */}
-        <div className="lp-bc lp-bc3 lp-bc-tint-secondary">
+        {/* Card 3 — Automate (4 col): standard card */}
+        <div className="lp-bc lp-bc3">
           <div className="lp-chip lp-chip-b">Automate</div>
           <div className="lp-bc-title">
             Workflow
@@ -902,8 +1002,8 @@ function Bento() {
           </div>
         </div>
 
-        {/* Card 4 — Integrations (4 col) */}
-        <div className="lp-bc lp-bc4">
+        {/* Card 4 — Integrations (4 col): accent treatment */}
+        <div className="lp-bc lp-bc4 lp-bc-accent">
           <div className="lp-chip lp-chip-a">Integrations</div>
           <div className="lp-bc-title">
             <em>100+</em>
@@ -918,8 +1018,8 @@ function Bento() {
           </div>
         </div>
 
-        {/* Card 5 — Discover (4 col) */}
-        <div className="lp-bc lp-bc5 lp-bc-tint-secondary">
+        {/* Card 5 — Discover (4 col): standard card */}
+        <div className="lp-bc lp-bc5">
           <div className="lp-chip lp-chip-b">Discover</div>
           <div className="lp-bc-title">
             Intelligent
@@ -1011,9 +1111,6 @@ function Cta() {
           <Link href="/sign-up" className="lp-btn-primary">
             Start for free <IconArrow />
           </Link>
-          <Link href="#" className="lp-btn-outline">
-            Talk to sales
-          </Link>
         </div>
       </div>
     </section>
@@ -1032,21 +1129,6 @@ function Footer() {
         </div>
         Squid
       </Link>
-
-      <div className="lp-footer-links">
-        <Link href="#" className="lp-footer-link">
-          Privacy
-        </Link>
-        <Link href="#" className="lp-footer-link">
-          Terms
-        </Link>
-        <Link href="#" className="lp-footer-link">
-          Security
-        </Link>
-        <Link href="#" className="lp-footer-link">
-          Status
-        </Link>
-      </div>
 
       <p className="lp-footer-copyright">
         © 2026 Squid Inc. All rights reserved.

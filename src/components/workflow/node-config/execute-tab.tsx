@@ -7,7 +7,7 @@ import { useReactFlow } from "@xyflow/react";
 import { useObjectState } from "@/hooks/use-object-state";
 import { UINode } from "lib/ai/workflow/workflow.interface";
 import { cn, createDebounce } from "lib/utils";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { GraphEndEvent } from "ts-edge";
 import { allNodeValidate } from "lib/ai/workflow/node-validate";
 import { toast } from "sonner";
@@ -16,7 +16,6 @@ import { Alert, AlertDescription, AlertTitle } from "ui/alert";
 import {
   AlertTriangleIcon,
   Loader,
-  Loader2,
   Copy,
   Check,
   WandSparklesIcon,
@@ -37,8 +36,6 @@ import {
   SelectValue,
 } from "ui/select";
 import { Textarea } from "ui/textarea";
-import { NodeIcon } from "../node-icon";
-import { TextShimmer } from "ui/text-shimmer";
 import { generateObjectAction } from "@/app/api/chat/actions";
 import { appStore } from "@/app/store";
 import { notify } from "lib/notify";
