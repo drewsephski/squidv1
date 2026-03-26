@@ -23,6 +23,8 @@ export async function GET(
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const storageModule: any = await import(
+      /* webpackIgnore: true */
+      // @ts-ignore
       "./../../../../lib/file-storage/storage.local"
     );
     const { readFile } = storageModule;
