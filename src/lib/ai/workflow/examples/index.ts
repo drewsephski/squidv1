@@ -2,6 +2,7 @@ import { DBEdge, DBNode, DBWorkflow } from "app-types/workflow";
 import { generateUUID } from "lib/utils";
 import { babyResearchEdges, babyResearchNodes } from "./baby-research";
 import { getWeatherEdges, getWeatherNodes } from "./get-weather";
+import { productResearchNodes, productResearchEdges } from "./product-research";
 import {
   contentRepurposingNodes,
   contentRepurposingEdges,
@@ -58,6 +59,35 @@ export const BabyResearch = (): {
     },
     nodes: babyResearchNodes,
     edges: babyResearchEdges.map((edge) => ({
+      ...edge,
+      id: generateUUID(),
+    })),
+  };
+};
+
+export const ProductResearch = (): {
+  workflow: Partial<DBWorkflow>;
+  nodes: Partial<DBNode>[];
+  edges: Partial<DBEdge>[];
+} => {
+  return {
+    workflow: {
+      description:
+        "Research any product with AI-powered web search. Analyzes search results, extracts key features and pricing, optionally fetches detailed content, and generates a comprehensive report with verdict and confidence score.",
+      name: "product-research",
+      isPublished: true,
+      visibility: "private",
+      icon: {
+        type: "emoji",
+        value:
+          "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f50d.png",
+        style: {
+          backgroundColor: "oklch(65% 0.15 250)",
+        },
+      },
+    },
+    nodes: productResearchNodes,
+    edges: productResearchEdges.map((edge) => ({
       ...edge,
       id: generateUUID(),
     })),

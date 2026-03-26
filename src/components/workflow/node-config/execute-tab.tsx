@@ -43,10 +43,11 @@ import { generateObjectAction } from "@/app/api/chat/actions";
 import { appStore } from "@/app/store";
 import { notify } from "lib/notify";
 import { SelectModel } from "@/components/select-model";
-import { WorkflowCompletionNotification } from "../workflow-completion-notification";
+import { WorkflowResultDialog } from "../workflow-result";
 import { useCopy } from "@/hooks/use-copy";
 import { useTranslations } from "next-intl";
 import { mutate } from "swr";
+import { WorkflowChatOutput } from "../workflow-chat-output";
 
 const debounce = createDebounce();
 
@@ -78,9 +79,7 @@ export function ExecuteTab({
   const [isRunning, setIsRunning] = useState(false);
   const [histories, setHistories] = useState<NodeRuntimeHistory[]>([]);
   const [result, setResult] = useState<GraphEndEvent | undefined>();
-  const [selectedHistory, setSelectedHistory] = useState<
-    NodeRuntimeHistory | undefined
-  >();
+  const [showResultDialog, setShowResultDialog] = useState(false);
   const { copied, copy } = useCopy();
 
   const isProcessing = useMemo(
@@ -91,7 +90,6 @@ export function ExecuteTab({
   const { getEdges, getNodes, fitView, getNode, updateNodeData, setNodes } =
     useReactFlow<UINode>();
   const nodes = getNodes();
-  const historyRef = useRef<HTMLDivElement>(null);
 
   const [query, setQuery] = useObjectState({} as Record<string, any>);
 
@@ -265,10 +263,6 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
                   break;
                 case "NODE_START": {
                   fitviewWithDebounce(event.node.name);
-                  historyRef.current?.scrollTo({
-                    top: historyRef.current?.scrollHeight,
-                    behavior: "smooth",
-                  });
                   updateNodeData(event.node.name, {
                     runtime: { status: "running" },
                   });
@@ -504,183 +498,53 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
           </Button>
         </div>
       ) : tab == tabs[1].value ? (
-        <div>
-          <div
-            className="flex flex-col px-4 h-[30vh] overflow-y-auto"
-            ref={historyRef}
-          >
-            {histories.map((history, i) => {
-              return (
-                <div key={i}>
-                  <div
-                    className={cn(
-                      "cursor-pointer hover:bg-muted flex items-center gap-2 text-sm rounded-sm px-2 py-1.5 relative group transition-all duration-200",
-                      history.status == "fail" && "text-destructive",
-                      selectedHistory?.id === history.id &&
-                        "bg-muted border border-primary",
-                    )}
-                    onClick={() =>
-                      setSelectedHistory(
-                        selectedHistory?.id === history.id
-                          ? undefined
-                          : history,
-                      )
-                    }
-                  >
-                    {i != 0 && (
-                      <div className="absolute left-4.5 -top-1.5 w-px h-3">
-                        <Separator orientation="vertical" />
-                      </div>
-                    )}
-                    <div className="border rounded-lg overflow-hidden bg-card group-hover:shadow-md transition-all duration-200">
-                      <NodeIcon
-                        type={history.kind}
-                        iconClassName="size-3 group-hover:scale-110 transition-transform"
-                        className="rounded-none"
-                      />
-                    </div>
-                    {history.status == "running" ? (
-                      <TextShimmer className="font-semibold">
-                        {`${history.name} Running...`}
-                      </TextShimmer>
-                    ) : (
-                      <span className="font-semibold">{history.name}</span>
-                    )}
-                    <span
-                      className={cn(
-                        "ml-auto text-xs font-medium",
-                        history.status != "fail" && "text-muted-foreground",
-                      )}
-                    >
-                      {history.status != "running" &&
-                        (
-                          (history.endedAt! - history.startedAt!) /
-                          1000
-                        ).toFixed(2)}
-                    </span>
-                    {history.status == "success" ? (
-                      <Check className="size-3 text-primary animate-fade-in" />
-                    ) : history.status == "fail" ? (
-                      <XIcon className="size-3 text-destructive animate-fade-in" />
-                    ) : (
-                      <Loader2 className="size-3 animate-spin text-muted-foreground" />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        <div className="flex flex-col h-full">
+          {/* Chat-style workflow output */}
+          <WorkflowChatOutput
+            histories={histories}
+            isRunning={isRunning}
+            className="flex-1 max-h-[50vh]"
+          />
+
           <Separator />
-          {selectedHistory && (
-            <div className="px-4 py-4 border-t">
-              <div className="flex items-center mb-4">
-                <p className="font-semibold text-sm text-foreground">
-                  Event Metadata
-                </p>
+
+          {/* Final result section */}
+          <div className="px-4 py-4">
+            <div className="flex items-center mb-3">
+              <p className="font-semibold text-sm text-foreground">
+                Final Output
+              </p>
+              <div className="flex-1" />
+              {result && (
+                <>
+                  <Button
+                    size="sm"
+                    onClick={() => setShowResultDialog(true)}
+                    className="mr-2"
+                  >
+                    {t("Common.viewResults")}
+                  </Button>
+                  <WorkflowResultDialog
+                    result={result}
+                    open={showResultDialog}
+                    onOpenChange={setShowResultDialog}
+                  />
+                </>
+              )}
+              {lastOutput && (
                 <Button
                   variant={"ghost"}
                   size={"icon"}
-                  className="ml-auto border-border hover:bg-muted transition-all duration-200"
-                  onClick={() => setSelectedHistory(undefined)}
+                  className="border-border hover:bg-muted transition-all duration-200"
+                  onClick={() => copy(JSON.stringify(lastOutput))}
                 >
-                  <XIcon className="size-3 text-muted-foreground" />
-                </Button>
-              </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium text-muted-foreground">
-                      Node ID:
-                    </span>
-                    <p className="font-mono">{selectedHistory.nodeId}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">
-                      Status:
-                    </span>
-                    <p
-                      className={cn(
-                        "font-medium",
-                        selectedHistory.status === "success" && "text-primary",
-                        selectedHistory.status === "fail" && "text-destructive",
-                        selectedHistory.status === "running" &&
-                          "text-muted-foreground",
-                      )}
-                    >
-                      {selectedHistory.status}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">
-                      Started:
-                    </span>
-                    <p>
-                      {new Date(selectedHistory.startedAt).toLocaleTimeString()}
-                    </p>
-                  </div>
-                  {selectedHistory.endedAt && (
-                    <div>
-                      <span className="font-medium text-muted-foreground">
-                        Duration:
-                      </span>
-                      <p>
-                        {(
-                          (selectedHistory.endedAt -
-                            selectedHistory.startedAt) /
-                          1000
-                        ).toFixed(2)}
-                        s
-                      </p>
-                    </div>
+                  {copied ? (
+                    <Check className="size-3 text-primary animate-fade-in" />
+                  ) : (
+                    <Copy className="size-3 text-muted-foreground group-hover:text-primary transition-colors" />
                   )}
-                </div>
-                {selectedHistory.error && (
-                  <div>
-                    <span className="font-medium text-muted-foreground text-sm">
-                      Error:
-                    </span>
-                    <div className="mt-1 p-2 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
-                      <pre className="whitespace-pre-wrap break-words">
-                        {selectedHistory.error}
-                      </pre>
-                    </div>
-                  </div>
-                )}
-                {selectedHistory.result && (
-                  <div>
-                    <span className="font-medium text-muted-foreground text-sm">
-                      Result:
-                    </span>
-                    <div className="mt-2">
-                      <JsonView data={selectedHistory.result} />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          <div className="px-4 py-4">
-            <div className="flex items-center mb-4">
-              <p className="font-semibold text-sm text-foreground">Result</p>
-              <div className="flex-1" />
-              {result && (
-                <WorkflowCompletionNotification
-                  result={result}
-                  autoOpen={true}
-                />
+                </Button>
               )}
-              <Button
-                variant={"ghost"}
-                size={"icon"}
-                className="ml-auto border-border hover:bg-muted transition-all duration-200"
-                onClick={() => copy(JSON.stringify(lastOutput))}
-              >
-                {copied ? (
-                  <Check className="size-3 text-primary animate-fade-in" />
-                ) : (
-                  <Copy className="size-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                )}
-              </Button>
             </div>
             {resultView}
           </div>

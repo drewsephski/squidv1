@@ -1,4 +1,4 @@
 // Re-export only async functions from server-instance and server-instance-with-headers
 
 export { auth } from "./server-instance";
-export { getSession } from "./server-instance-with-headers";
+export { getSession, getIsFirstUser } from "./server-instance-with-headers";

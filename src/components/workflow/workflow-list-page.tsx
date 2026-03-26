@@ -29,6 +29,7 @@ import {
   BabyResearch,
   GetWeather,
   ContentRepurposing,
+  ProductResearch,
 } from "lib/ai/workflow/examples";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -208,6 +209,11 @@ export default function WorkflowListPage({
                 onClick={() => createExample(ContentRepurposing())}
               >
                 📱 {t("Workflow.example.contentRepurposing")}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => createExample(ProductResearch())}
+              >
+                🔍 {t("Workflow.example.productResearch")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -378,19 +378,15 @@ export default function ChatBot({ threadId, initialMessages }: Props) {
     }
   }, [isPendingToolCall, scrollToBottom]);
 
-  // Auto-scroll when new messages are added
+  // Auto-scroll during streaming to keep up with thought process text
   useEffect(() => {
-    if (messages.length > 0 && containerRef.current) {
-      const isNearBottom =
-        containerRef.current.scrollHeight -
-          containerRef.current.scrollTop -
-          containerRef.current.clientHeight <
-        100;
-      if (isNearBottom) {
-        scrollToBottom();
-      }
+    if (status === "streaming" && containerRef.current && isAtBottom) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: "auto",
+      });
     }
-  }, [messages.length, scrollToBottom]);
+  }, [messages, status, isAtBottom]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

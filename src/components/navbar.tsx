@@ -35,7 +35,6 @@ export function Navbar() {
   ];
 
   const authenticatedNavItems = [
-    { label: "Chat", href: "/chat" },
     { label: "Agents", href: "/chat/agents" },
     { label: "Workflows", href: "/chat/workflow" },
     { label: "MCPs", href: "/chat/mcp" },
