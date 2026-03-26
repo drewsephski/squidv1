@@ -1,6 +1,6 @@
 import { getSession } from "auth/server";
 import { createWorkflowExecutor } from "lib/ai/workflow/executor/workflow-executor";
-import { workflowRepository } from "lib/db/repository";
+import { workflowRepository, workflowRunRepository } from "lib/db/repository";
 import { encodeWorkflowEvent } from "lib/ai/workflow/shared.workflow";
 import logger from "logger";
 import { colorize } from "consola/utils";
@@ -28,6 +28,17 @@ export async function POST(
   const wfLogger = logger.withDefaults({
     message: colorize("cyan", `WORKFLOW '${workflow.name}' `),
   });
+
+  // Create a workflow run record
+  const workflowRun = await workflowRunRepository.insert({
+    workflowId: id,
+    userId: session.user.id,
+    title: `${workflow.name} - ${new Date().toLocaleString()}`,
+    status: "running",
+    input: query,
+    metadata: {},
+  });
+
   const app = createWorkflowExecutor({
     edges: workflow.edges,
     nodes: workflow.nodes,
@@ -39,9 +50,18 @@ export async function POST(
   const stream = new ReadableStream({
     start(controller) {
       let isAborted = false;
+      let isClosed = false;
+
+      const safeClose = () => {
+        if (!isClosed) {
+          isClosed = true;
+          controller.close();
+        }
+      };
+
       // Subscribe to workflow events
       app.subscribe((evt) => {
-        if (isAborted) return;
+        if (isAborted || isClosed) return;
         if (
           (evt.eventType == "NODE_START" || evt.eventType == "NODE_END") &&
           evt.node.name == "SKIP"
@@ -60,12 +80,15 @@ export async function POST(
           const data = encodeWorkflowEvent(evt);
           controller.enqueue(encoder.encode(data));
           // Close stream when workflow ends
-          if (evt.eventType === "WORKFLOW_END") {
-            controller.close();
+          if (evt.eventType === "WORKFLOW_END" && evt.endedAt) {
+            safeClose();
           }
         } catch (error) {
           logger.error("Stream write error:", error);
-          controller.error(error);
+          if (!isClosed) {
+            controller.error(error);
+            isClosed = true;
+          }
         }
       });
 
@@ -73,7 +96,7 @@ export async function POST(
       request.signal.addEventListener("abort", async () => {
         isAborted = true;
         void app.exit();
-        controller.close();
+        safeClose();
       });
 
       // Start the workflow
@@ -85,9 +108,19 @@ export async function POST(
             timeout: 1000 * 60 * 5,
           },
         )
-        .then((result) => {
+        .then(async (result) => {
           if (!result.isOk) {
             logger.error("Workflow execution error:", result.error);
+          }
+
+          // Update workflow run with final result
+          if (result.endedAt) {
+            await workflowRunRepository.update(workflowRun.id, {
+              status: result.isOk ? "completed" : "failed",
+              output: JSON.stringify(result.output),
+              error: result.error ? JSON.stringify(result.error) : undefined,
+              endedAt: new Date(),
+            });
           }
         });
     },

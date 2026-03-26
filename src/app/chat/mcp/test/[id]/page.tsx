@@ -504,7 +504,7 @@ export default function Page() {
 
       <div className="bg-background pb-2">
         <Link
-          href="/mcp"
+          href="/chat/mcp"
           className="flex items-center gap-2 text-muted-foreground text-sm hover:text-foreground transition-colors pb-4"
         >
           <ArrowLeft className="size-3" />

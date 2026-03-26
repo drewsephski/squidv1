@@ -27,7 +27,7 @@ import { toAny } from "lib/utils";
 import { McpServerCustomizationsPrompt, MCPToolInfo } from "app-types/mcp";
 import { serverCache } from "lib/cache";
 import { CacheKeys } from "lib/cache/cache-keys";
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import logger from "logger";
 
 import { JSONSchema7 } from "json-schema";

@@ -7,7 +7,7 @@ import {
 } from "@/components/user/user-detail/user-stats-card-loader";
 
 import { Suspense } from "react";
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { requireAdminPermission } from "auth/permissions";
 
 interface PageProps {

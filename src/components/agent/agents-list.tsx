@@ -120,7 +120,7 @@ export function AgentsList({
           {t("Layout.agents")}
         </h1>
         {canCreate && (
-          <Link href="/agent/new">
+          <Link href="/chat/agent/new">
             <Button variant="ghost" data-testid="create-agent-button">
               <Plus />
               {t("Agent.newAgent")}
@@ -139,7 +139,7 @@ export function AgentsList({
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {canCreate && (
-              <Link href="/agent/new">
+              <Link href="/chat/agent/new">
                 <Card
                   className="relative bg-secondary overflow-hidden cursor-pointer hover:bg-input transition-colors h-[196px]"
                   data-testid="create-agent-card"
@@ -172,7 +172,7 @@ export function AgentsList({
                 key={agent.id}
                 type="agent"
                 item={agent}
-                href={`/agent/${agent.id}`}
+                href={`/chat/agent/${agent.id}`}
                 onVisibilityChange={updateVisibility}
                 isVisibilityChangeLoading={visibilityChangeLoading === agent.id}
                 isDeleteLoading={deletingAgentLoading === agent.id}
@@ -199,7 +199,7 @@ export function AgentsList({
               type="agent"
               item={agent}
               isOwner={false}
-              href={`/agent/${agent.id}`}
+              href={`/chat/agent/${agent.id}`}
               onBookmarkToggle={toggleBookmark}
               isBookmarkToggleLoading={isBookmarkLoading(agent.id)}
             />

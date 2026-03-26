@@ -1,7 +1,7 @@
 "use server";
 
 import { archiveRepository } from "lib/db/repository";
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { ArchiveCreateSchema, ArchiveUpdateSchema } from "app-types/archive";
 
 async function getUserId() {

@@ -42,7 +42,30 @@
     "createWithExample": "Opprett med eksempel",
     "resultsFound": "{count} resultater funnet",
     "youAreAnExpertIn": "Du er en ekspert på {role}",
-    "sharedBy": "Delt av {userName}"
+    "sharedBy": "Delt av {userName}",
+    "copy": "Kopier",
+    "download": "Last ned",
+    "errorDetails": "Feildetaljer",
+    "copyRawOutput": "Kopier Rå Output",
+    "downloadRawOutput": "Last ned Rå Output",
+    "arrangeNodes": "Automatisk Layout",
+    "nodesArranged": "Layout ble brukt",
+    "visibilityUpdated": "Synlighet oppdatert",
+    "deleteConfirm": "Er du sikker på at du vil slette denne arbeidsflyten?",
+    "deleted": "Arbeidsflyt slettet",
+    "completedSuccessfully": "Fullført",
+    "completedWithError": "Fullført med feil",
+    "contentReadyDescription": "Innholdet ditt er klart. Vil du se det?",
+    "viewResults": "Se Resultater",
+    "copyAll": "Kopier Alt",
+    "downloadAll": "Last ned Alt",
+    "executionSummary": "Kjøreoversikt",
+    "socialMediaContent": "Sosiale Medier Innhold",
+    "toolResults": "Verktøy Resultater",
+    "generatedContent": "Generert Innhold",
+    "generatedData": "Generert Data",
+    "resultsCopied": "Resultater kopiert",
+    "resultsDownloaded": "Resultater lastet ned"
   },
   "Error": {},
   "Info": {
@@ -135,7 +158,8 @@
     },
     "example": {
       "babyResearch": "Baby research",
-      "getWeather": "Sjekk været"
+      "getWeather": "Sjekk været",
+      "contentRepurposing": "Innholdsgjenbruk"
     },
     "kindsDescription": {
       "input": "Definer inndataparametere som chatboten vil gi når den bruker denne arbeidsflyten som verktøy.\n\nSpesifiser datastrukturen og valideringsreglene for verktøykjøring.",

@@ -371,6 +371,27 @@ export default function ChatBot({ threadId, initialMessages }: Props) {
       });
   }, [isInitialThreadEntry]);
 
+  // Auto-scroll when AI starts thinking
+  useEffect(() => {
+    if (isPendingToolCall && containerRef.current) {
+      scrollToBottom();
+    }
+  }, [isPendingToolCall, scrollToBottom]);
+
+  // Auto-scroll when new messages are added
+  useEffect(() => {
+    if (messages.length > 0 && containerRef.current) {
+      const isNearBottom =
+        containerRef.current.scrollHeight -
+          containerRef.current.scrollTop -
+          containerRef.current.clientHeight <
+        100;
+      if (isNearBottom) {
+        scrollToBottom();
+      }
+    }
+  }, [messages.length, scrollToBottom]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const messages = latestRef.current.messages;
@@ -430,10 +451,11 @@ export default function ChatBot({ threadId, initialMessages }: Props) {
           <>
             <div
               className={
-                "flex flex-col gap-2 overflow-y-auto py-6 z-10 [scrollbar-gutter:stable_both-edges]"
+                "flex flex-col gap-2 overflow-y-auto pt-12 pb-6 z-10 [scrollbar-gutter:stable_both-edges] flex-1"
               }
               ref={containerRef}
               onScroll={handleScroll}
+              data-testid="chat-container"
             >
               {messages.map((message, index) => {
                 const isLastMessage = messages.length - 1 === index;

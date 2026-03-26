@@ -1,7 +1,7 @@
 "use server";
 
 import { BasicUserWithLastLogin, UserPreferences } from "app-types/user";
-import { auth, getSession } from "auth/server";
+import { auth, getSession } from "lib/auth/server-instance-with-headers";
 import { Session } from "better-auth";
 import { userRepository } from "lib/db/repository";
 import { headers } from "next/headers";

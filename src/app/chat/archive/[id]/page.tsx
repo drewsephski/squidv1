@@ -1,5 +1,5 @@
 import { archiveRepository, chatRepository } from "lib/db/repository";
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "ui/card";
@@ -82,7 +82,7 @@ export default async function ArchivePage({
   const archive = await getArchiveWithThreads(id);
 
   if (!archive) {
-    redirect("/");
+    redirect("/chat");
   }
 
   return (

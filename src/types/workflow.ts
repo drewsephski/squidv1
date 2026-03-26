@@ -3,11 +3,70 @@ import { ObjectJsonSchema7, Visibility } from "./util";
 import { NodeKind } from "lib/ai/workflow/workflow.interface";
 import { tag } from "lib/tag";
 
+export { NodeKind };
+
 export type WorkflowIcon = {
   type: "emoji";
   value: string;
   style?: Record<string, string>;
 };
+
+export type WorkflowRunStatus =
+  | "running"
+  | "completed"
+  | "failed"
+  | "cancelled";
+
+export type WorkflowRun = {
+  id: string;
+  workflowId: string;
+  userId: string;
+  title: string;
+  status: WorkflowRunStatus;
+  startedAt: Date;
+  endedAt?: Date;
+  input: Record<string, any>;
+  output?: Record<string, any>;
+  error?: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
+  metadata: Record<string, any>;
+};
+
+export type WorkflowRunSummary = {
+  id: string;
+  workflowId: string;
+  workflowName: string;
+  workflowIcon?: WorkflowIcon;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  title: string;
+  status: WorkflowRunStatus;
+  startedAt: Date;
+  endedAt?: Date;
+  duration?: number; // in milliseconds
+  input: Record<string, any>;
+  output?: Record<string, any>;
+  error?: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
+  metadata: Record<string, any>;
+};
+
+export interface WorkflowRunRepository {
+  selectById(id: string): Promise<WorkflowRun | null>;
+  selectByIdWithDetails(id: string): Promise<WorkflowRunSummary | null>;
+  selectByUserId(userId: string): Promise<WorkflowRunSummary[]>;
+  insert(run: Omit<WorkflowRun, "id" | "startedAt">): Promise<WorkflowRun>;
+  update(id: string, updates: Partial<WorkflowRun>): Promise<WorkflowRun>;
+  delete(id: string): Promise<void>;
+  checkAccess(id: string, userId: string): Promise<boolean>;
+}
 
 export type DBWorkflow = {
   id: string;

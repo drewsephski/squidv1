@@ -24,6 +24,13 @@ import { ObjectJsonSchema7 } from "app-types/util";
 // Helper function to safely cast string to UUID in SQL
 const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
 
+// Helper function to safely cast array of UUIDs in SQL for any() function
+const uuidAny = (column: any, values: string[]) =>
+  sql`${column} = any(${sql.join(
+    values.map((id) => sql`${id}::uuid`),
+    ", ",
+  )})`;
+
 export const pgWorkflowRepository: WorkflowRepository = {
   async selectToolByIds(ids) {
     if (!ids.length) return [];
@@ -44,7 +51,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
       )
       .where(
         and(
-          sql`${WorkflowTable.id} = any(${ids.map((id) => sql`${id}::uuid`)})`,
+          uuidAny(WorkflowTable.id, ids),
           eq(WorkflowTable.isPublished, true),
         ),
       );
@@ -84,7 +91,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
         and(
           eq(WorkflowTable.isPublished, true),
           or(
-            eq(WorkflowTable.userId, userId),
+            uuidEq(WorkflowTable.userId, userId),
             not(eq(WorkflowTable.visibility, "private")),
           ),
         ),
@@ -110,7 +117,7 @@ export const pgWorkflowRepository: WorkflowRepository = {
       .where(
         or(
           inArray(WorkflowTable.visibility, ["public", "readonly"]),
-          eq(WorkflowTable.userId, userId),
+          uuidEq(WorkflowTable.userId, userId),
         ),
       )
       .orderBy(desc(WorkflowTable.createdAt));

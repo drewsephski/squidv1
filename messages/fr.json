@@ -41,7 +41,30 @@
     "createWithExample": "Créer avec Exemple",
     "resultsFound": "{count} résultats trouvés",
     "youAreAnExpertIn": "Vous êtes un expert en {role}",
-    "sharedBy": "Partagé par {userName}"
+    "sharedBy": "Partagé par {userName}",
+    "copy": "Copier",
+    "download": "Télécharger",
+    "errorDetails": "Détails de l'Erreur",
+    "copyRawOutput": "Copier la Sortie Brute",
+    "downloadRawOutput": "Télécharger la Sortie Brute",
+    "arrangeNodes": "Mise en Page Automatique",
+    "nodesArranged": "Mise en page appliquée avec succès",
+    "visibilityUpdated": "Visibilité mise à jour avec succès",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce flux de travail?",
+    "deleted": "Flux de travail supprimé",
+    "completedSuccessfully": "Terminé avec succès",
+    "completedWithError": "Terminé avec erreur",
+    "contentReadyDescription": "Votre contenu est prêt. Voulez-vous le voir?",
+    "viewResults": "Voir les Résultats",
+    "copyAll": "Copier Tout",
+    "downloadAll": "Télécharger Tout",
+    "executionSummary": "Résumé d'Exécution",
+    "socialMediaContent": "Contenu des Réseaux Sociaux",
+    "toolResults": "Résultats des Outils",
+    "generatedContent": "Contenu Généré",
+    "generatedData": "Données Générées",
+    "resultsCopied": "Résultats copiés dans le presse-papiers",
+    "resultsDownloaded": "Résultats téléchargés"
   },
   "Auth": {
     "SignIn": {
@@ -430,7 +453,8 @@
     "generateInputWithAIDescription": "Écrivez un prompt pour générer une entrée pour le flux de travail",
     "example": {
       "babyResearch": "Recherche de Bébé",
-      "getWeather": "Obtenir Météo"
+      "getWeather": "Obtenir Météo",
+      "contentRepurposing": "Réutilisation de Contenu"
     },
     "selectVariable": "Sélectionner Variable",
     "structuredOutput": "Sortie Structurée",

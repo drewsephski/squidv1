@@ -17,7 +17,7 @@ export default async function Page({
 
   const thread = await fetchThread(threadId);
 
-  if (!thread) redirect("/", RedirectType.replace);
+  if (!thread) redirect("/chat", RedirectType.replace);
 
   return <ChatBot threadId={threadId} initialMessages={thread.messages} />;
 }

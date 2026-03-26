@@ -42,7 +42,30 @@
     "generateWithAI": "AI로 생성",
     "resultsFound": "{count}개의 결과 찾음",
     "youAreAnExpertIn": "당신은 {role} 전문가입니다",
-    "sharedBy": "{userName}님이 공유함"
+    "sharedBy": "{userName}님이 공유함",
+    "copy": "복사",
+    "download": "다운로드",
+    "errorDetails": "오류 세부 정보",
+    "copyRawOutput": "원시 출력 복사",
+    "downloadRawOutput": "원시 출력 다운로드",
+    "arrangeNodes": "자동 레이아웃",
+    "nodesArranged": "레이아웃이 성공적으로 적용되었습니다",
+    "visibilityUpdated": "시적성이 성공적으로 업데이트되었습니다",
+    "deleteConfirm": "이 워크플로를 삭제하시겠습니까?",
+    "deleted": "워크플로가 삭제되었습니다",
+    "completedSuccessfully": "성공적으로 완료되었습니다",
+    "completedWithError": "오류와 함께 완료되었습니다",
+    "contentReadyDescription": "콘텐츠가 준비되었습니다. 보시겠습니까?",
+    "viewResults": "결과 보기",
+    "copyAll": "모두 복사",
+    "downloadAll": "모두 다운로드",
+    "executionSummary": "실행 요약",
+    "socialMediaContent": "소셜 미디어 콘텐츠",
+    "toolResults": "도구 결과",
+    "generatedContent": "생성된 콘텐츠",
+    "generatedData": "생성된 데이터",
+    "resultsCopied": "결과가 클립보드에 복사되었습니다",
+    "resultsDownloaded": "결과가 다운로드되었습니다"
   },
   "Auth": {
     "SignIn": {
@@ -445,7 +468,8 @@
     "generateInputWithAIDescription": "워크플로우에 대한 입력을 생성하는 프롬프트를 작성하세요",
     "example": {
       "babyResearch": "베이비 리서치",
-      "getWeather": "날씨 조회"
+      "getWeather": "날씨 조회",
+      "contentRepurposing": "콘텐츠 재활용"
     },
     "selectVariable": "변수 선택",
     "structuredOutput": "구조화된 출력",

@@ -264,7 +264,7 @@ export function AppSidebarThreads() {
                                   isActive={currentThreadId === thread.id}
                                 >
                                   <Link
-                                    href={`/chat/${thread.id}`}
+                                    href={`/chat/chat/${thread.id}`}
                                     className="flex items-center"
                                   >
                                     {generatingTitleThreadIds.includes(

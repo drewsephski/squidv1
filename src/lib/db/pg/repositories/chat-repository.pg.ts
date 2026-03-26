@@ -48,7 +48,7 @@ export const pgChatRepository: ChatRepository = {
       .select()
       .from(ChatThreadTable)
       .leftJoin(UserTable, eq(ChatThreadTable.userId, UserTable.id))
-      .where(sql`${ChatThreadTable.id} = ${id}::uuid`);
+      .where(uuidEq(ChatThreadTable.id, id));
 
     if (!thread) {
       return null;
@@ -98,7 +98,7 @@ export const pgChatRepository: ChatRepository = {
         ChatMessageTable,
         eq(ChatThreadTable.id, ChatMessageTable.threadId),
       )
-      .where(sql`${ChatThreadTable.userId} = ${userId}::uuid`)
+      .where(uuidEq(ChatThreadTable.userId, userId))
       .groupBy(ChatThreadTable.id)
       .orderBy(desc(sql`last_message_at`));
 
@@ -124,7 +124,7 @@ export const pgChatRepository: ChatRepository = {
       .set({
         title: thread.title,
       })
-      .where(sql`${ChatThreadTable.id} = ${id}::uuid`)
+      .where(uuidEq(ChatThreadTable.id, id))
       .returning();
     return result;
   },

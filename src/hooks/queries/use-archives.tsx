@@ -1,9 +1,10 @@
+"use client";
 import { appStore } from "@/app/store";
 import { ArchiveWithItemCount } from "app-types/archive";
 import { fetcher } from "lib/utils";
 import useSWR from "swr";
 
-export const useArchives = () => {
+export default function useArchives() {
   return useSWR<ArchiveWithItemCount[]>("/api/archive", fetcher, {
     fallbackData: [],
     revalidateOnFocus: false,
@@ -14,4 +15,4 @@ export const useArchives = () => {
       });
     },
   });
-};
+}

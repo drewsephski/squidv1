@@ -1,4 +1,4 @@
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { chatRepository } from "lib/db/repository";
 
 export async function GET() {

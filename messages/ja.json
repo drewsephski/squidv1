@@ -41,7 +41,30 @@
     "createWithExample": "例で作成",
     "resultsFound": "{count}件の結果が見つかりました",
     "youAreAnExpertIn": "あなたは{role}の専門家です",
-    "sharedBy": "{userName}さんが共有"
+    "sharedBy": "{userName}さんが共有",
+    "copy": "コピー",
+    "download": "ダウンロード",
+    "errorDetails": "エラーの詳細",
+    "copyRawOutput": "生の出力をコピー",
+    "downloadRawOutput": "生の出力をダウンロード",
+    "arrangeNodes": "自動レイアウト",
+    "nodesArranged": "レイアウトが正常に適用されました",
+    "visibilityUpdated": "可視性が正常に更新されました",
+    "deleteConfirm": "このワークフローを削除してもよろしいですか？",
+    "deleted": "ワークフローが削除されました",
+    "completedSuccessfully": "正常に完了しました",
+    "completedWithError": "エラーで完了しました",
+    "contentReadyDescription": "コンテンツの準備ができました。表示しますか？",
+    "viewResults": "結果を表示",
+    "copyAll": "すべてコピー",
+    "downloadAll": "すべてダウンロード",
+    "executionSummary": "実行の概要",
+    "socialMediaContent": "ソーシャルメディアコンテンツ",
+    "toolResults": "ツールの結果",
+    "generatedContent": "生成されたコンテンツ",
+    "generatedData": "生成されたデータ",
+    "resultsCopied": "結果がクリップボードにコピーされました",
+    "resultsDownloaded": "結果がダウンロードされました"
   },
   "Auth": {
     "SignIn": {
@@ -430,7 +453,8 @@
     "generateInputWithAIDescription": "ワークフローの入力を生成するプロンプトを書いてください",
     "example": {
       "babyResearch": "ベビーリサーチ",
-      "getWeather": "天気取得"
+      "getWeather": "天気取得",
+      "contentRepurposing": "コンテンツ再利用"
     },
     "selectVariable": "変数を選択",
     "structuredOutput": "構造化出力",

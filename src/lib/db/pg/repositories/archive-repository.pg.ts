@@ -44,7 +44,7 @@ export const pgArchiveRepository: ArchiveRepository = {
         ArchiveItemTable,
         eq(ArchiveTable.id, ArchiveItemTable.archiveId),
       )
-      .where(eq(ArchiveTable.userId, userId))
+      .where(uuidEq(ArchiveTable.userId, userId))
       .groupBy(ArchiveTable.id)
       .orderBy(ArchiveTable.updatedAt);
 
@@ -135,7 +135,7 @@ export const pgArchiveRepository: ArchiveRepository = {
       .where(
         and(
           eq(ArchiveItemTable.itemId, itemId),
-          eq(ArchiveTable.userId, userId),
+          uuidEq(ArchiveTable.userId, userId),
         ),
       )
       .orderBy(ArchiveTable.name);

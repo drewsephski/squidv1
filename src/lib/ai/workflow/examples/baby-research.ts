@@ -28,7 +28,7 @@ export const babyResearchNodes: Partial<DBNode>[] = [
         type: "object",
         properties: { tool_result: { type: "object" } },
       },
-      model: { provider: "openai", model: "4o" },
+      model: { provider: "openRouter", model: "openrouter/free" },
       message: {
         type: "doc",
         content: [
@@ -340,7 +340,7 @@ export const babyResearchNodes: Partial<DBNode>[] = [
         type: "object",
         properties: { tool_result: { type: "object" } },
       },
-      model: { provider: "openai", model: "4o" },
+      model: { provider: "openRouter", model: "openrouter/free" },
       message: {
         type: "doc",
         content: [
@@ -1166,7 +1166,7 @@ export const babyResearchNodes: Partial<DBNode>[] = [
         type: "object",
         properties: { tool_result: { type: "object" } },
       },
-      model: { provider: "openai", model: "4o" },
+      model: { provider: "openRouter", model: "openrouter/free" },
       message: {
         type: "doc",
         content: [
@@ -1731,7 +1731,7 @@ export const babyResearchNodes: Partial<DBNode>[] = [
           },
         },
       ],
-      model: { provider: "openai", model: "4o" },
+      model: { provider: "openRouter", model: "openrouter/free" },
     },
   },
   {
@@ -2416,7 +2416,7 @@ export const babyResearchNodes: Partial<DBNode>[] = [
           },
         },
       ],
-      model: { provider: "openai", model: "4o" },
+      model: { provider: "openRouter", model: "openrouter/free" },
     },
   },
   {

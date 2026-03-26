@@ -1,4 +1,4 @@
-import { customModelProvider } from "lib/ai/models";
+import { customModelProvider, isToolCallUnsupportedModel } from "lib/ai/models";
 import {
   ConditionNodeData,
   OutputNodeData,
@@ -124,19 +124,153 @@ export const llmNodeExecutor: NodeExecutor<LLMNodeData> = async ({
     };
   }
 
-  const response = await generateObject({
-    model,
-    messages: convertToModelMessages(messages),
-    schema: jsonSchemaToZod(node.outputSchema.properties.answer),
-    maxRetries: 3,
-  });
+  // Determine correct schema property based on node output structure
+  let schemaProperty;
+  if (node.outputSchema.properties?.answer) {
+    schemaProperty = node.outputSchema.properties.answer;
+  } else if (node.outputSchema.properties?.twitter_thread) {
+    schemaProperty = node.outputSchema.properties.twitter_thread;
+  } else if (node.outputSchema.properties?.linkedin_post) {
+    schemaProperty = node.outputSchema.properties.linkedin_post;
+  } else if (node.outputSchema.properties?.instagram_caption) {
+    schemaProperty = node.outputSchema.properties.instagram_caption;
+  } else {
+    // Fallback to first available property
+    const firstProperty = Object.values(node.outputSchema.properties || {})[0];
+    if (firstProperty) {
+      schemaProperty = firstProperty;
+    } else {
+      throw new Error(
+        `No valid output schema property found for node ${node.id}`,
+      );
+    }
+  }
 
-  return {
-    output: {
-      totalTokens: response.usage.totalTokens,
-      answer: response.object,
-    },
-  };
+  // Try generateObject first with enhanced error handling and retry logic
+  let lastError: any = null;
+  let retryCount = 0;
+  const maxRetries = 3;
+
+  while (retryCount < maxRetries) {
+    try {
+      const response = await generateObject({
+        model,
+        messages: convertToModelMessages(messages),
+        schema: jsonSchemaToZod(schemaProperty),
+        maxRetries: 1, // Reduce individual attempt retries since we handle retries at this level
+      });
+
+      return {
+        output: {
+          totalTokens: response.usage.totalTokens,
+          answer: response.object,
+        },
+      };
+    } catch (error: unknown) {
+      lastError = error;
+      retryCount++;
+
+      // Log error for debugging
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const errorName =
+        error instanceof Error ? error.constructor.name : "UnknownError";
+
+      console.error(`generateObject attempt ${retryCount} failed:`, {
+        nodeId: node.id,
+        nodeName: node.name,
+        error: errorMessage,
+        errorName,
+        isError: error instanceof Error,
+        isNoObjectGeneratedError: errorName === "AI_NoObjectGeneratedError",
+        rawResponse:
+          (error as any).response ||
+          (error as any).text ||
+          "No raw response available",
+      });
+
+      // If it's not a parsing error, don't retry
+      if (errorName !== "AI_NoObjectGeneratedError") {
+        throw error;
+      }
+
+      // If we've exhausted retries, fall back to generateText + manual parsing
+      if (retryCount >= maxRetries) {
+        console.log(
+          `All generateObject attempts failed for node ${node.id}, falling back to generateText + manual parsing`,
+        );
+        break;
+      }
+
+      // Add delay between retries
+      if (retryCount < maxRetries) {
+        await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount));
+      }
+    }
+  }
+
+  // Fallback: use generateText and manual JSON parsing
+  try {
+    const textResponse = await generateText({
+      model,
+      messages: [
+        ...convertToModelMessages(messages),
+        {
+          role: "system",
+          content: `CRITICAL: You must respond with valid JSON only. No explanations, no markdown formatting, no \`\`\` code blocks. Just raw JSON that matches this schema: ${JSON.stringify(node.outputSchema.properties.answer, null, 2)}`,
+        },
+      ],
+    });
+
+    // Try to extract JSON from the response
+    let parsedObject;
+    try {
+      // Look for JSON blocks in the response
+      const jsonMatch = textResponse.text.match(/```json\s*([\s\S]*?)```/g);
+      const jsonText = jsonMatch ? jsonMatch[1] : textResponse.text.trim();
+
+      parsedObject = JSON.parse(jsonText);
+
+      // Validate against the schema
+      const zodSchema = jsonSchemaToZod(schemaProperty);
+      parsedObject = zodSchema.parse(parsedObject);
+
+      console.log(`Successfully parsed fallback response for node ${node.id}`);
+
+      return {
+        output: {
+          totalTokens: textResponse.usage.totalTokens,
+          answer: parsedObject,
+        },
+      };
+    } catch (parseError: unknown) {
+      const parseErrorMessage =
+        parseError instanceof Error ? parseError.message : String(parseError);
+      console.error(`Failed to parse fallback response for node ${node.id}:`, {
+        rawText: textResponse.text,
+        parseError: parseErrorMessage,
+      });
+
+      // Return the raw text as fallback
+      return {
+        output: {
+          totalTokens: textResponse.usage.totalTokens,
+          answer: {
+            _error: "Failed to parse structured response",
+            _rawText: textResponse.text,
+            _originalError:
+              lastError instanceof Error ? lastError.message : "Unknown error",
+          },
+        },
+      };
+    }
+  } catch (fallbackError) {
+    console.error(
+      `Fallback generateText also failed for node ${node.id}:`,
+      fallbackError,
+    );
+    throw fallbackError;
+  }
 };
 
 /**
@@ -215,7 +349,11 @@ export const toolNodeExecutor: NodeExecutor<ToolNodeData> = async ({
 
     const response = await generateText({
       model: customModelProvider.getModel(node.model),
-      toolChoice: "required", // Force the model to call the tool
+      toolChoice: isToolCallUnsupportedModel(
+        customModelProvider.getModel(node.model),
+      )
+        ? undefined
+        : "auto", // Use auto for broader model compatibility
       prompt: prompt || "",
       tools: {
         [node.tool.id]: {
@@ -226,7 +364,7 @@ export const toolNodeExecutor: NodeExecutor<ToolNodeData> = async ({
     });
 
     result.input = {
-      parameter: response.toolCalls.find((call) => call.input)?.input,
+      parameter: response.toolCalls?.find((call) => call.input)?.input,
       prompt,
     };
   }

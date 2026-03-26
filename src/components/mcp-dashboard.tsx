@@ -190,7 +190,7 @@ export default function MCPDashboard({ message, user }: MCPDashboardProps) {
                 </Link>
               )}
               {canCreate && (
-                <Link href="/mcp/create">
+                <Link href="/chat/mcp/create">
                   <Button
                     className="font-semibold bg-input/20"
                     variant="outline"
