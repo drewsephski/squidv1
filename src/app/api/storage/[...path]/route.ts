@@ -7,15 +7,21 @@
  * Add this file to your existing src/app/api/storage/ directory.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "@/lib/file-storage/storage.local";
 import path from "path";
 import { lookup as mimeLookup } from "mime-types";
+
+const isDesktop = process.env.NEXT_PUBLIC_SQUID_PORT;
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ path: string[] }> },
 ) {
+  if (!isDesktop) {
+    return NextResponse.json({ error: "Not available" }, { status: 404 });
+  }
+
   try {
+    const { readFile } = await import("@/lib/file-storage/storage.local");
     const resolvedParams = await params;
     const pathname = resolvedParams.path.join("/");
 

@@ -15,8 +15,12 @@ const createCache = () => {
 
   if (isDesktop) {
     logger.info("Using LocalCache for desktop mode");
-    const { cache } = require("./cache.local");
-    return cache;
+    try {
+      const { cache } = require("./cache.local");
+      return cache;
+    } catch {
+      logger.warn("cache.local not available, falling back to MemoryCache");
+    }
   }
 
   if (IS_DEV) {
