@@ -1,4 +1,4 @@
-CREATE TABLE "workflow_run" (
+CREATE TABLE IF NOT EXISTS "workflow_run" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"workflow_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
