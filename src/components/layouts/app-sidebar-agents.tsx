@@ -132,7 +132,7 @@ export function AppSidebarAgents({ userRole }: { userRole?: string | null }) {
             <div className="px-2 mt-1">
               {canCreateAgent(userRole) ? (
                 <Link
-                  href={"/agent/new"}
+                  href={"/chat/agent/new"}
                   className="bg-input/40 py-8 px-4 hover:bg-input/100 rounded-lg cursor-pointer flex justify-between items-center text-xs overflow-hidden"
                   data-testid="sidebar-create-agent-link"
                 >

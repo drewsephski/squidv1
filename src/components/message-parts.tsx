@@ -603,6 +603,21 @@ export const ReasoningPart = memo(function ReasoningPart({
     }
   }, [isThinking]);
 
+  // Auto-scroll to bottom when reasoning appears
+  useEffect(() => {
+    if (isThinking && window) {
+      const chatContainer = document.querySelector(
+        '[data-testid="chat-container"]',
+      );
+      if (chatContainer) {
+        chatContainer.scrollTo({
+          top: chatContainer.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [isThinking]);
+
   return (
     <div
       className="flex flex-col cursor-pointer"

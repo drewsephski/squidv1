@@ -206,7 +206,7 @@ export const MCPCard = memo(function MCPCard({
               </div>
             ) : (
               <Link
-                href={`/mcp/test/${encodeURIComponent(id)}`}
+                href={`/chat/mcp/test/${encodeURIComponent(id)}`}
                 className="cursor-pointer hidden sm:block"
               >
                 <Button variant="ghost" size="icon">
@@ -244,7 +244,7 @@ export const MCPCard = memo(function MCPCard({
           isOwner={isOwner}
           canChangeVisibility={canChangeVisibility}
           editHref={
-            isOwner ? `/mcp/modify/${encodeURIComponent(id)}` : undefined
+            isOwner ? `/chat/mcp/modify/${encodeURIComponent(id)}` : undefined
           }
           onVisibilityChange={
             canChangeVisibility ? handleVisibilityChange : undefined

@@ -41,7 +41,30 @@
     "createWithExample": "Crear con Ejemplo",
     "resultsFound": "{count} resultados encontrados",
     "youAreAnExpertIn": "Eres un experto en {role}",
-    "sharedBy": "Compartido por {userName}"
+    "sharedBy": "Compartido por {userName}",
+    "copy": "Copiar",
+    "download": "Descargar",
+    "errorDetails": "Detalles del Error",
+    "copyRawOutput": "Copiar Salida Cruda",
+    "downloadRawOutput": "Descargar Salida Cruda",
+    "arrangeNodes": "Diseño Automático",
+    "nodesArranged": "Diseño aplicado correctamente",
+    "visibilityUpdated": "Visibilidad actualizada correctamente",
+    "deleteConfirm": "¿Estás seguro de que deseas eliminar este flujo de trabajo?",
+    "deleted": "Flujo de trabajo eliminado",
+    "completedSuccessfully": "Completado correctamente",
+    "completedWithError": "Completado con error",
+    "contentReadyDescription": "Tu contenido está listo. ¿Deseas verlo?",
+    "viewResults": "Ver Resultados",
+    "copyAll": "Copiar Todo",
+    "downloadAll": "Descargar Todo",
+    "executionSummary": "Resumen de Ejecución",
+    "socialMediaContent": "Contenido de Redes Sociales",
+    "toolResults": "Resultados de Herramientas",
+    "generatedContent": "Contenido Generado",
+    "generatedData": "Datos Generados",
+    "resultsCopied": "Resultados copiados al portapapeles",
+    "resultsDownloaded": "Resultados descargados"
   },
   "Auth": {
     "SignIn": {
@@ -430,7 +453,8 @@
     "generateInputWithAIDescription": "Escribe un prompt para generar entrada para el flujo de trabajo",
     "example": {
       "babyResearch": "Investigación de Bebés",
-      "getWeather": "Consultar Clima"
+      "getWeather": "Consultar Clima",
+      "contentRepurposing": "Reutilización de Contenido"
     },
     "selectVariable": "Seleccionar Variable",
     "structuredOutput": "Salida Estructurada",

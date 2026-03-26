@@ -1,8 +1,11 @@
 import { pgDb as db } from "../db.pg";
 import { McpServerTable, UserTable } from "../schema.pg";
-import { eq, or, desc } from "drizzle-orm";
+import { eq, or, desc, sql } from "drizzle-orm";
 import { generateUUID } from "lib/utils";
 import type { MCPRepository } from "app-types/mcp";
+
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
 
 export const pgMcpRepository: MCPRepository = {
   async save(server) {
@@ -63,7 +66,7 @@ export const pgMcpRepository: MCPRepository = {
       .leftJoin(UserTable, eq(McpServerTable.userId, UserTable.id))
       .where(
         or(
-          eq(McpServerTable.userId, userId),
+          uuidEq(McpServerTable.userId, userId),
           eq(McpServerTable.visibility, "public"),
         ),
       )

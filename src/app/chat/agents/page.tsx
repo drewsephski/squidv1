@@ -1,5 +1,5 @@
 import { agentRepository } from "lib/db/repository";
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { notFound } from "next/navigation";
 import { AgentsList } from "@/components/agent/agents-list";
 

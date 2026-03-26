@@ -387,3 +387,38 @@ export const ChatExportCommentTable = pgTable("chat_export_comment", {
 export type ArchiveEntity = typeof ArchiveTable.$inferSelect;
 export type ArchiveItemEntity = typeof ArchiveItemTable.$inferSelect;
 export type BookmarkEntity = typeof BookmarkTable.$inferSelect;
+
+export const WorkflowRunTable = pgTable(
+  "workflow_run",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    workflowId: uuid("workflow_id")
+      .notNull()
+      .references(() => WorkflowTable.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    status: varchar("status", {
+      enum: ["running", "completed", "failed", "cancelled"],
+    })
+      .notNull()
+      .default("running"),
+    startedAt: timestamp("started_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    endedAt: timestamp("ended_at"),
+    input: json("input").notNull(),
+    output: json("output"),
+    error: json("error"),
+    metadata: json("metadata").default({}),
+  },
+  (t) => [
+    index("workflow_run_user_id_idx").on(t.userId),
+    index("workflow_run_workflow_id_idx").on(t.workflowId),
+    index("workflow_run_status_idx").on(t.status),
+    index("workflow_run_started_at_idx").on(t.startedAt),
+  ],
+);
+
+export type WorkflowRunEntity = typeof WorkflowRunTable.$inferSelect;

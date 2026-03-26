@@ -1,5 +1,5 @@
 import WorkflowListPage from "@/components/workflow/workflow-list-page";
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { redirect } from "next/navigation";
 
 // Force dynamic rendering to avoid static generation issues with session

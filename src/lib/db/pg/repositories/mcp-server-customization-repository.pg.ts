@@ -1,7 +1,10 @@
 import { McpServerCustomizationRepository } from "app-types/mcp";
 import { pgDb as db } from "../db.pg";
 import { McpServerCustomizationTable, McpServerTable } from "../schema.pg";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
+
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
 
 export type McpServerCustomization = {
   id: string;
@@ -31,7 +34,7 @@ export const pgMcpServerCustomizationRepository: McpServerCustomizationRepositor
         )
         .where(
           and(
-            eq(McpServerCustomizationTable.userId, userId),
+            uuidEq(McpServerCustomizationTable.userId, userId),
             eq(McpServerCustomizationTable.mcpServerId, mcpServerId),
           ),
         );

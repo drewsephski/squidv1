@@ -2,7 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { UserSession, UserSessionUser } from "app-types/user";
 
-import { getSession } from "auth/server";
+import { getSession } from "auth/server-instance-with-headers";
 import {
   requireAdminPermission,
   requireUserManagePermissionFor,

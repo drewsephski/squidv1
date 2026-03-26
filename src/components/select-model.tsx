@@ -32,6 +32,19 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
   const { data: providers } = useChatModels();
   const [model, setModel] = useState(props.currentModel);
 
+  // Helper function to get display name for a model
+  const getDisplayName = (provider: string, modelName: string) => {
+    const providerData = providers?.find((p) => p.provider === provider);
+    const modelData = providerData?.models.find((m) => m.name === modelName);
+    return modelData?.displayName || modelName;
+  };
+
+  // Get display name for selected model
+  const getSelectedModelDisplayName = () => {
+    if (!model) return "model";
+    return getDisplayName(model.provider, model.model);
+  };
+
   useEffect(() => {
     const modelToUse = props.currentModel ?? appStore.getState().chatModel;
 
@@ -57,7 +70,9 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
                   className="size-2.5 mr-1"
                 />
               )}
-              <p data-testid="selected-model-name">{model?.model || "model"}</p>
+              <p data-testid="selected-model-name">
+                {getSelectedModelDisplayName()}
+              </p>
             </div>
             <ChevronDown className="size-3" />
           </Button>
@@ -125,10 +140,17 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
                       ) : (
                         <div className="ml-3" />
                       )}
-                      <span className="pr-2">{item.name}</span>
+                      <span className="pr-2">
+                        {item.displayName || item.name}
+                      </span>
                       {item.isToolCallUnsupported && (
                         <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
                           No tools
+                        </div>
+                      )}
+                      {!provider.hasAPIKey && (
+                        <div className="ml-auto flex items-center gap-1 text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">
+                          Paid
                         </div>
                       )}
                     </CommandItem>
@@ -161,8 +183,8 @@ const ProviderHeader = memo(function ProviderHeader({
       {provider}
       {!hasAPIKey && (
         <>
-          <span className="text-xs ml-auto text-muted-foreground">
-            No API Key
+          <span className="text-xs ml-auto bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">
+            Paid
           </span>
         </>
       )}

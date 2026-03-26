@@ -1,4 +1,4 @@
-import "server-only";
+// Re-export only async functions from server-instance and server-instance-with-headers
 
-// Re-export everything from auth-instance
-export { auth, getSession, getIsFirstUser } from "./auth-instance";
+export { auth } from "./server-instance";
+export { getSession } from "./server-instance-with-headers";

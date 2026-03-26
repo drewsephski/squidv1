@@ -26,7 +26,7 @@ export const ThemeStyleProvider = React.memo(function ({
   }, [themeStyle]);
 
   if (!mounted) {
-    return null;
+    return <div style={{ display: "none" }}>{children}</div>;
   }
 
   return children;

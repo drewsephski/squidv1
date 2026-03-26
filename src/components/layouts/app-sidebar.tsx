@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { AppSidebarMenus } from "./app-sidebar-menus";
 import { AppSidebarAgents } from "./app-sidebar-agents";
 import { AppSidebarThreads } from "./app-sidebar-threads";
+import { AppSidebarWorkflowRuns } from "./app-sidebar-workflow-runs";
 import { SidebarHeaderShared } from "./sidebar-header";
 
 import { isShortcutEvent, Shortcuts } from "lib/keyboard-shortcuts";
@@ -53,6 +54,7 @@ export function AppSidebar({
           <AppSidebarMenus user={user} />
           <AppSidebarAgents userRole={userRole} />
           <AppSidebarThreads />
+          <AppSidebarWorkflowRuns />
         </div>
       </SidebarContent>
       <SidebarFooter className="flex flex-col items-stretch space-y-2">

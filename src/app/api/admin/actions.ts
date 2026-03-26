@@ -2,7 +2,7 @@
 
 import { validatedActionWithAdminPermission } from "lib/action-utils";
 import { headers } from "next/headers";
-import { auth } from "auth/server";
+import { auth } from "lib/auth/server-instance";
 import { DEFAULT_USER_ROLE, userRolesInfo } from "app-types/roles";
 import {
   UpdateUserRoleSchema,

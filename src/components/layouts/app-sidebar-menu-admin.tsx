@@ -18,16 +18,16 @@ const AppSidebarAdmin = () => {
   const pathname = usePathname();
   const t = useTranslations("Admin");
   const shouldExpandAdmin = useMemo(() => {
-    return pathname.startsWith("/admin");
+    return pathname.startsWith("/chat/admin");
   }, [pathname]);
   const adminNavItems = useMemo(
     () => [
       {
         id: "users",
         title: t("Users.title"),
-        url: "/admin",
+        url: "/chat/admin",
         icon: Users,
-        isActive: pathname.startsWith("/admin/users"),
+        isActive: pathname.startsWith("/chat/admin/users"),
       },
     ],
     [t, pathname],
@@ -37,7 +37,7 @@ const AppSidebarAdmin = () => {
     <SidebarMenu className="group/admin">
       <Tooltip>
         <SidebarMenuItem>
-          <Link href="/admin" data-testid="admin-sidebar-link">
+          <Link href="/chat/admin" data-testid="admin-sidebar-link">
             <SidebarMenuButton className="font-semibold">
               <Shield className="size-4 text-foreground" />
               {t("title")}

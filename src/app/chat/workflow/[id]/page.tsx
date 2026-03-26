@@ -3,7 +3,7 @@ import {
   convertDBNodeToUINode,
 } from "lib/ai/workflow/shared.workflow";
 import Workflow from "@/components/workflow/workflow";
-import { getSession } from "auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { workflowRepository } from "lib/db/repository";
 import { notFound, redirect } from "next/navigation";
 

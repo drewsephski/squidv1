@@ -103,4 +103,4 @@ This layered approach ensures:
 
 **Project Synergy:** Combine personal preferences with project-specific instructions for domain expertise (e.g., "React developer" + "E-commerce project context").
 
-> 💡 **Result:** Every conversation becomes more productive because the assistant already understands your context, preferences, and workflow — no need to repeat yourself! 
+> 💡 **Result:** Every conversation becomes more productive because the assistant already understands your context, preferences, and workflow — no need to repeat yourself!

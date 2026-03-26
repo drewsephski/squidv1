@@ -31,22 +31,25 @@ export function AppHeader() {
   const searchParams = useSearchParams();
 
   const showActionButtons = useMemo(() => {
-    if (currentPaths.startsWith("/admin")) {
+    if (currentPaths.startsWith("/chat/admin")) {
       return false;
     }
     return true;
   }, [currentPaths]);
 
   const componentByPage = useMemo(() => {
-    if (currentPaths.startsWith("/chat/")) {
+    if (currentPaths === "/chat" || currentPaths.startsWith("/chat/")) {
       return <ThreadDropdownComponent />;
     }
     if (
-      currentPaths.startsWith("/admin/users/") &&
-      currentPaths.split("/").length > 3
+      currentPaths.startsWith("/chat/admin/users") &&
+      currentPaths.split("/chat").length > 3
     ) {
       const searchPageParams = searchParams.get("searchPageParams");
-      const returnUrl = buildReturnUrl("/admin/users", searchPageParams || "");
+      const returnUrl = buildReturnUrl(
+        "/chat/admin/users",
+        searchPageParams || "",
+      );
       return (
         <BackButton
           data-testid="admin-users-back-button"
@@ -58,7 +61,7 @@ export function AppHeader() {
   }, [currentPaths, searchParams]);
 
   return (
-    <header className="sticky top-0 z-50 flex items-center px-3 py-2">
+    <header className="sticky top-0 z-50 flex items-center px-3 py-2 bg-transparent backdrop-blur-none">
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -103,7 +106,7 @@ export function AppHeader() {
               <Button
                 size={"icon"}
                 variant={"ghost"}
-                className="bg-secondary/40"
+                className="bg-secondary/80"
                 onClick={() => {
                   appStoreMutate((state) => ({
                     voiceChat: {
@@ -138,8 +141,8 @@ export function AppHeader() {
             <TooltipTrigger asChild>
               <Button
                 size={"icon"}
-                variant={"secondary"}
-                className="bg-secondary/40"
+                variant={"ghost"}
+                className="bg-secondary/80"
                 onClick={() => {
                   appStoreMutate((state) => ({
                     temporaryChat: {

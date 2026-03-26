@@ -16,6 +16,9 @@ import { and, count, eq, sql } from "drizzle-orm";
 import z from "zod";
 import { pgChatRepository } from "./chat-repository.pg";
 
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
+
 function toChatExport(data: typeof ChatExportTable.$inferSelect): ChatExport {
   return {
     id: data.id,
@@ -132,7 +135,10 @@ export const pgChatExportRepository: ChatExportRepository = {
       })
       .from(ChatExportTable)
       .where(
-        and(eq(ChatExportTable.id, id), eq(ChatExportTable.exporterId, userId)),
+        and(
+          eq(ChatExportTable.id, id),
+          uuidEq(ChatExportTable.exporterId, userId),
+        ),
       );
     return result.length > 0;
   },

@@ -6,7 +6,7 @@ import {
 } from "lib/admin/server";
 import { getAdminUsers } from "lib/admin/server";
 import { requireAdminPermission } from "auth/permissions";
-import { getSession } from "lib/auth/server";
+import { getSession } from "lib/auth/server-instance-with-headers";
 import { redirect, unauthorized } from "next/navigation";
 
 // Force dynamic rendering to avoid static generation issues with session
@@ -60,7 +60,7 @@ export default async function UserListPage({ searchParams }: PageProps) {
       page={page}
       limit={limit}
       query={params.query}
-      baseUrl="/admin/users"
+      baseUrl="/chat/admin/users"
       sortBy={sortBy}
       sortDirection={sortDirection}
     />

@@ -4,6 +4,9 @@ import { AgentTable, BookmarkTable, UserTable } from "../schema.pg";
 import { and, desc, eq, ne, or, sql } from "drizzle-orm";
 import { generateUUID } from "lib/utils";
 
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
+
 export const pgAgentRepository: AgentRepository = {
   async insertAgent(agent) {
     const [result] = await db
@@ -48,7 +51,7 @@ export const pgAgentRepository: AgentRepository = {
         BookmarkTable,
         and(
           eq(BookmarkTable.itemId, AgentTable.id),
-          eq(BookmarkTable.userId, userId),
+          uuidEq(BookmarkTable.userId, userId),
           eq(BookmarkTable.itemType, "agent"),
         ),
       )
@@ -56,7 +59,7 @@ export const pgAgentRepository: AgentRepository = {
         and(
           eq(AgentTable.id, id),
           or(
-            eq(AgentTable.userId, userId), // Own agent
+            uuidEq(AgentTable.userId, userId), // Own agent
             eq(AgentTable.visibility, "public"), // Public agent
             eq(AgentTable.visibility, "readonly"), // Readonly agent
           ),
@@ -92,7 +95,7 @@ export const pgAgentRepository: AgentRepository = {
       })
       .from(AgentTable)
       .innerJoin(UserTable, eq(AgentTable.userId, UserTable.id))
-      .where(eq(AgentTable.userId, userId))
+      .where(uuidEq(AgentTable.userId, userId))
       .orderBy(desc(AgentTable.createdAt));
 
     // Map database nulls to undefined and set defaults for owned agents
@@ -137,7 +140,7 @@ export const pgAgentRepository: AgentRepository = {
   async deleteAgent(id, userId) {
     await db
       .delete(AgentTable)
-      .where(and(eq(AgentTable.id, id), eq(AgentTable.userId, userId)));
+      .where(and(eq(AgentTable.id, id), uuidEq(AgentTable.userId, userId)));
   },
 
   async selectAgents(
@@ -150,7 +153,7 @@ export const pgAgentRepository: AgentRepository = {
     // Build OR conditions based on filters array
     for (const filter of filters) {
       if (filter === "mine") {
-        orConditions.push(eq(AgentTable.userId, currentUserId));
+        orConditions.push(uuidEq(AgentTable.userId, currentUserId));
       } else if (filter === "shared") {
         orConditions.push(
           and(
@@ -177,7 +180,7 @@ export const pgAgentRepository: AgentRepository = {
         orConditions = [
           or(
             // My agents
-            eq(AgentTable.userId, currentUserId),
+            uuidEq(AgentTable.userId, currentUserId),
             // Shared agents
             and(
               ne(AgentTable.userId, currentUserId),
@@ -214,7 +217,7 @@ export const pgAgentRepository: AgentRepository = {
         and(
           eq(BookmarkTable.itemId, AgentTable.id),
           eq(BookmarkTable.itemType, "agent"),
-          eq(BookmarkTable.userId, currentUserId),
+          uuidEq(BookmarkTable.userId, currentUserId),
         ),
       )
       .where(orConditions.length > 1 ? or(...orConditions) : orConditions[0])

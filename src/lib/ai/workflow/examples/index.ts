@@ -2,6 +2,10 @@ import { DBEdge, DBNode, DBWorkflow } from "app-types/workflow";
 import { generateUUID } from "lib/utils";
 import { babyResearchEdges, babyResearchNodes } from "./baby-research";
 import { getWeatherEdges, getWeatherNodes } from "./get-weather";
+import {
+  contentRepurposingNodes,
+  contentRepurposingEdges,
+} from "./content-repurposing";
 
 export const GetWeather = (): {
   workflow: Partial<DBWorkflow>;
@@ -54,6 +58,35 @@ export const BabyResearch = (): {
     },
     nodes: babyResearchNodes,
     edges: babyResearchEdges.map((edge) => ({
+      ...edge,
+      id: generateUUID(),
+    })),
+  };
+};
+
+export const ContentRepurposing = (): {
+  workflow: Partial<DBWorkflow>;
+  nodes: Partial<DBNode>[];
+  edges: Partial<DBEdge>[];
+} => {
+  return {
+    workflow: {
+      description:
+        "Transform one piece of content into platform-specific posts for Twitter, LinkedIn, and Instagram. Extracts key messages and generates ready-to-post content with appropriate formatting, hashtags, and tone for each platform.",
+      name: "content-repurposing",
+      isPublished: true,
+      visibility: "private",
+      icon: {
+        type: "emoji",
+        value:
+          "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/270d-fe0f.png",
+        style: {
+          backgroundColor: "oklch(45.2% 0.245 277.723)",
+        },
+      },
+    },
+    nodes: contentRepurposingNodes,
+    edges: contentRepurposingEdges.map((edge) => ({
       ...edge,
       id: generateUUID(),
     })),

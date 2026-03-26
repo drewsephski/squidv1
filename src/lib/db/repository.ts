@@ -4,6 +4,7 @@ import { pgMcpRepository } from "./pg/repositories/mcp-repository.pg";
 import { pgMcpMcpToolCustomizationRepository } from "./pg/repositories/mcp-tool-customization-repository.pg";
 import { pgMcpServerCustomizationRepository } from "./pg/repositories/mcp-server-customization-repository.pg";
 import { pgWorkflowRepository } from "./pg/repositories/workflow-repository.pg";
+import { pgWorkflowRunRepository } from "./pg/repositories/workflow-run-repository.pg";
 import { pgAgentRepository } from "./pg/repositories/agent-repository.pg";
 import { pgArchiveRepository } from "./pg/repositories/archive-repository.pg";
 import { pgMcpOAuthRepository } from "./pg/repositories/mcp-oauth-repository.pg";
@@ -20,6 +21,7 @@ export const mcpServerCustomizationRepository =
 export const mcpOAuthRepository = pgMcpOAuthRepository;
 
 export const workflowRepository = pgWorkflowRepository;
+export const workflowRunRepository = pgWorkflowRunRepository;
 export const agentRepository = pgAgentRepository;
 export const archiveRepository = pgArchiveRepository;
 export const bookmarkRepository = pgBookmarkRepository;

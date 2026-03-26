@@ -1,7 +1,10 @@
 import { pgDb as db } from "../db.pg";
 import { McpServerTable, McpToolCustomizationTable } from "../schema.pg";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import type { McpToolCustomizationRepository } from "@/types/mcp";
+
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
 
 export const pgMcpMcpToolCustomizationRepository: McpToolCustomizationRepository =
   {
@@ -11,7 +14,7 @@ export const pgMcpMcpToolCustomizationRepository: McpToolCustomizationRepository
         .from(McpToolCustomizationTable)
         .where(
           and(
-            eq(McpToolCustomizationTable.userId, key.userId),
+            uuidEq(McpToolCustomizationTable.userId, key.userId),
             eq(McpToolCustomizationTable.mcpServerId, key.mcpServerId),
             eq(McpToolCustomizationTable.toolName, key.toolName),
           ),
@@ -24,7 +27,7 @@ export const pgMcpMcpToolCustomizationRepository: McpToolCustomizationRepository
         .from(McpToolCustomizationTable)
         .where(
           and(
-            eq(McpToolCustomizationTable.userId, key.userId),
+            uuidEq(McpToolCustomizationTable.userId, key.userId),
             eq(McpToolCustomizationTable.mcpServerId, key.mcpServerId),
           ),
         );
@@ -46,7 +49,7 @@ export const pgMcpMcpToolCustomizationRepository: McpToolCustomizationRepository
           McpServerTable,
           eq(McpToolCustomizationTable.mcpServerId, McpServerTable.id),
         )
-        .where(and(eq(McpToolCustomizationTable.userId, userId)));
+        .where(and(uuidEq(McpToolCustomizationTable.userId, userId)));
     },
 
     async upsertToolCustomization(data) {
@@ -81,7 +84,7 @@ export const pgMcpMcpToolCustomizationRepository: McpToolCustomizationRepository
           and(
             eq(McpToolCustomizationTable.mcpServerId, key.mcpServerId),
             eq(McpToolCustomizationTable.toolName, key.toolName),
-            eq(McpToolCustomizationTable.userId, key.userId),
+            uuidEq(McpToolCustomizationTable.userId, key.userId),
           ),
         );
     },

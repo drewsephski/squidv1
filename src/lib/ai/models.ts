@@ -75,61 +75,55 @@ const staticModels = {
   },
   openRouter: {
     "openrouter/free": openRouter("openrouter/free"),
-    "gpt-4.1": openRouter("openai/gpt-4.1"),
-    "gpt-4.1-mini": openRouter("openai/gpt-4.1-mini"),
-    "o4-mini": openRouter("openai/o4-mini"),
-    o3: openRouter("openai/o3"),
-    "gpt-5.1-chat": openRouter("openai/gpt-5.1-chat-latest"),
-    "gpt-5.1": openRouter("openai/gpt-5.1"),
-    "gpt-5.1-codex": openRouter("openai/gpt-5.1-codex"),
-    "gpt-5.1-codex-mini": openRouter("openai/gpt-5.1-codex-mini"),
-    "gemini-2.5-flash-lite": openRouter("google/gemini-2.5-flash-lite"),
-    "gemini-2.5-flash": openRouter("google/gemini-2.5-flash"),
-    "gemini-3-pro": openRouter("google/gemini-3-pro-preview"),
-    "gemini-2.5-pro": openRouter("google/gemini-2.5-pro"),
-    "sonnet-4.5": openRouter("anthropic/claude-sonnet-4-5"),
-    "haiku-4.5": openRouter("anthropic/claude-haiku-4-5"),
-    "opus-4.5": openRouter("anthropic/claude-opus-4-5"),
-    "grok-4-1-fast": openRouter("xai/grok-4-1-fast-non-reasoning"),
-    "grok-4-1": openRouter("xai/grok-4-1"),
-    "grok-3-mini": openRouter("xai/grok-3-mini"),
-    "gpt-oss-20b:free": openRouter("openai/gpt-oss-20b:free"),
-    "qwen3-8b:free": openRouter("qwen/qwen3-8b:free"),
-    "qwen3-14b:free": openRouter("qwen/qwen3-14b:free"),
-    "qwen3-coder:free": openRouter("qwen/qwen3-coder:free"),
-    "deepseek-r1:free": openRouter("deepseek/deepseek-r1-0528:free"),
-    "deepseek-v3:free": openRouter("deepseek/deepseek-chat-v3-0324:free"),
-    "gemini-2.0-flash-exp:free": openRouter("google/gemini-2.0-flash-exp:free"),
-    "deepseek-r1": openRouter("deepseek/deepseek-r1:1.5b"),
-    "deepseek-v3": openRouter("deepseek/deepseek-chat-v3-0324"),
-    "qwen-2.5-7b": openRouter("qwen/qwen-2.5-7b-instruct"),
-    "qwen-2.5-14b": openRouter("qwen/qwen-2.5-14b-instruct"),
-    "qwen-2.5-32b": openRouter("qwen/qwen-2.5-32b-instruct"),
-    "qwen-2.5-72b": openRouter("qwen/qwen-2.5-72b-instruct"),
-    "llama-3.1-8b": openRouter("meta-llama/llama-3.1-8b-instruct:free"),
-    "llama-3.1-70b": openRouter("meta-llama/llama-3.1-70b-instruct:free"),
-    "llama-3.3-70b": openRouter("meta-llama/llama-3.3-70b-instruct"),
-    "mistral-7b": openRouter("mistralai/mistral-7b-instruct:free"),
-    "mistral-nemo": openRouter("mistralai/mistral-nemo:free"),
-    "mixtral-8x7b": openRouter("mistralai/mixtral-8x7b-instruct:free"),
+    "openrouter/anthropic/claude-3.5-sonnet": openRouter(
+      "anthropic/claude-3.5-sonnet",
+    ),
+    "openrouter/anthropic/claude-3.5-haiku": openRouter(
+      "anthropic/claude-3.5-haiku",
+    ),
+    "openrouter/openai/gpt-4.1-mini": openRouter("openai/gpt-4.1-mini"),
+    "openrouter/minimax/minimax-m2.5-free": openRouter(
+      "minimax/minimax-m2.5-free",
+    ),
   },
 };
 
 const staticUnsupportedModels = new Set([
-  staticModels.openai["o4-mini"],
+  // Disable all OpenAI models except through OpenRouter
+  staticModels.openai["gpt-4.1"],
+  staticModels.openai["gpt-4.1-mini"],
+  staticModels.openai["o3"],
+  staticModels.openai["gpt-5.1-chat"],
+  staticModels.openai["gpt-5.1"],
+  staticModels.openai["gpt-5.1-codex"],
+  staticModels.openai["gpt-5.1-codex-mini"],
+  // Disable all Google models
+  staticModels.google["gemini-2.5-flash-lite"],
+  staticModels.google["gemini-2.5-flash"],
+  staticModels.google["gemini-3-pro"],
+  staticModels.google["gemini-2.5-pro"],
+  // Disable all Anthropic models
+  staticModels.anthropic["sonnet-4.5"],
+  staticModels.anthropic["haiku-4.5"],
+  staticModels.anthropic["opus-4.5"],
+  // Disable all XAI models
+  staticModels.xai["grok-4-1-fast"],
+  staticModels.xai["grok-4-1"],
+  staticModels.xai["grok-3-mini"],
+  // Disable all Ollama models
   staticModels.ollama["gemma3:1b"],
   staticModels.ollama["gemma3:4b"],
   staticModels.ollama["gemma3:12b"],
-  staticModels.openRouter["gpt-oss-20b:free"],
-  staticModels.openRouter["qwen3-8b:free"],
-  staticModels.openRouter["qwen3-14b:free"],
-  staticModels.openRouter["deepseek-r1:free"],
-  staticModels.openRouter["gemini-2.0-flash-exp:free"],
-  staticModels.openRouter["llama-3.1-8b"],
-  staticModels.openRouter["llama-3.1-70b"],
-  staticModels.openRouter["mistral-7b"],
-  staticModels.openRouter["mistral-nemo"],
-  staticModels.openRouter["mixtral-8x7b"],
+  // Disable all Groq models
+  staticModels.groq["kimi-k2-instruct"],
+  staticModels.groq["llama-4-scout-17b"],
+  staticModels.groq["gpt-oss-20b"],
+  staticModels.groq["gpt-oss-120b"],
+  staticModels.groq["qwen3-32b"],
+  // Disable paid OpenRouter models
+  staticModels.openRouter["openrouter/anthropic/claude-3.5-sonnet"],
+  staticModels.openRouter["openrouter/openai/gpt-4.1-mini"],
+  staticModels.openRouter["openrouter/minimax/minimax-m2.5-free"],
 ]);
 
 const staticSupportImageInputModels = {
@@ -158,9 +152,20 @@ registerFileSupport(
   staticModels.openai["gpt-4.1-mini"],
   OPENAI_FILE_MIME_TYPES,
 );
-registerFileSupport(staticModels.openai["gpt-5"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.openai["gpt-5-mini"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.openai["gpt-5-nano"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["o3"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(
+  staticModels.openai["gpt-5.1-chat"],
+  OPENAI_FILE_MIME_TYPES,
+);
+registerFileSupport(staticModels.openai["gpt-5.1"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(
+  staticModels.openai["gpt-5.1-codex"],
+  OPENAI_FILE_MIME_TYPES,
+);
+registerFileSupport(
+  staticModels.openai["gpt-5.1-codex-mini"],
+  OPENAI_FILE_MIME_TYPES,
+);
 
 registerFileSupport(
   staticModels.google["gemini-2.5-flash-lite"],
@@ -180,60 +185,13 @@ registerFileSupport(
   ANTHROPIC_FILE_MIME_TYPES,
 );
 registerFileSupport(
-  staticModels.anthropic["opus-4.1"],
+  staticModels.anthropic["opus-4.5"],
   ANTHROPIC_FILE_MIME_TYPES,
 );
 
-registerFileSupport(staticModels.xai["grok-4-fast"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.xai["grok-4-1-fast"], XAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.xai["grok-4-1"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.openRouter["gpt-4.1"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openRouter["gpt-4.1-mini"],
-  OPENAI_FILE_MIME_TYPES,
-);
-registerFileSupport(staticModels.openRouter["gpt-5.1"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openRouter["gpt-5.1-codex"],
-  OPENAI_FILE_MIME_TYPES,
-);
-
-registerFileSupport(
-  staticModels.openRouter["gemini-2.5-flash-lite"],
-  GEMINI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.openRouter["gemini-2.5-flash"],
-  GEMINI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.openRouter["gemini-2.5-pro"],
-  GEMINI_FILE_MIME_TYPES,
-);
-
-registerFileSupport(
-  staticModels.openRouter["sonnet-4.5"],
-  ANTHROPIC_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.openRouter["opus-4.5"],
-  ANTHROPIC_FILE_MIME_TYPES,
-);
-
-registerFileSupport(
-  staticModels.openRouter["grok-4-1-fast"],
-  XAI_FILE_MIME_TYPES,
-);
-registerFileSupport(staticModels.openRouter["grok-4-1"], XAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openRouter["grok-3-mini"],
-  XAI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.openRouter["gemini-2.0-flash-exp:free"],
-  GEMINI_FILE_MIME_TYPES,
-);
 
 const openaiCompatibleProviders = openaiCompatibleModelsSafeParse(
   process.env.OPENAI_COMPATIBLE_DATA,
@@ -265,11 +223,72 @@ export const getFilePartSupportedMimeTypes = (model: LanguageModel) => {
 
 const fallbackModel = staticModels.openRouter["openrouter/free"];
 
+// User-friendly display names for models
+const modelDisplayNames: Record<string, string> = {
+  // OpenRouter models
+  "openrouter/free": "Free Assistant",
+  "openrouter/anthropic/claude-3.5-sonnet": "Premium Chat",
+  "openrouter/anthropic/claude-3.5-haiku": "Quick Chat",
+  "openrouter/openai/gpt-4.1": "Advanced AI",
+  "openrouter/openai/gpt-4.1-mini": "Smart Assistant",
+  "openrouter/openai/o1-preview": "Reasoning Pro",
+  "openrouter/openai/o3-mini": "Fast Reasoning",
+  "openrouter/google/gemini-2.5-pro": "Creative Pro",
+  "openrouter/meta-llama/llama-3.1-8b": "Basic Chat",
+  "openrouter/meta-llama/llama-3.3-70b": "Powerful Chat",
+  "openrouter/deepseek/deepseek-chat": "Code Expert",
+  "openrouter/mistralai/mistral-7b": "Efficient AI",
+  "openrouter/mistralai/mistral-large": "Professional AI",
+  "openrouter/minimax/minimax-m2.5-free": "Free Creative",
+  "openrouter/cognitivecomputations/dolphin-mistral-24b-venice-edition-free":
+    "Free Advanced",
+  "openrouter/openai/gpt-oss-120b-free": "Free Powerful",
+
+  // OpenAI models (for completeness, though locked)
+  "gpt-4.1": "GPT-4 Advanced",
+  "gpt-4.1-mini": "GPT-4 Mini",
+  "o4-mini": "GPT-4o Mini",
+  o3: "GPT-4o",
+  "gpt-5.1-chat": "GPT-5 Chat",
+  "gpt-5.1": "GPT-5 Pro",
+  "gpt-5.1-codex": "GPT-5 Code",
+  "gpt-5.1-codex-mini": "GPT-5 Code Mini",
+
+  // Google models
+  "gemini-2.5-flash-lite": "Gemini Flash",
+  "gemini-2.5-flash": "Gemini Fast",
+  "gemini-3-pro": "Gemini Pro",
+  "gemini-2.5-pro": "Gemini Advanced",
+
+  // Anthropic models
+  "sonnet-4.5": "Claude Pro",
+  "haiku-4.5": "Claude Fast",
+  "opus-4.5": "Claude Expert",
+
+  // XAI models
+  "grok-4-1-fast": "Grok Fast",
+  "grok-4-1": "Grok Pro",
+  "grok-3-mini": "Grok Mini",
+
+  // Ollama models
+  "gemma3:1b": "Local Mini",
+  "gemma3:4b": "Local Basic",
+  "gemma3:12b": "Local Pro",
+
+  // Groq models
+  "kimi-k2-instruct": "Fast Writer",
+  "llama-4-scout-17b": "Quick Scout",
+  "gpt-oss-20b": "Open Source",
+  "gpt-oss-120b": "Powerful OSS",
+  "qwen3-32b": "Balanced AI",
+};
+
 export const customModelProvider = {
   modelsInfo: Object.entries(allModels).map(([provider, models]) => ({
     provider,
     models: Object.entries(models).map(([name, model]) => ({
       name,
+      displayName: modelDisplayNames[name] || name,
       isToolCallUnsupported: isToolCallUnsupportedModel(model),
       isImageInputUnsupported: isImageInputUnsupportedModel(model),
       supportedFileMimeTypes: [...getFilePartSupportedMimeTypes(model)],
@@ -315,7 +334,13 @@ function checkProviderAPIKey(provider: keyof typeof staticModels) {
       }
       break;
     default:
-      return true; // assume the provider has an API key
+      return true; // assume provider has an API key
   }
-  return !!key && key != "****";
+
+  // Only allow OpenRouter provider to have API key for paid app
+  if (provider !== "openRouter") {
+    return false;
+  }
+
+  return !!key && key !== "****";
 }

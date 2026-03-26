@@ -42,7 +42,30 @@
     "generateWithAI": "用 AI 生成",
     "resultsFound": "找到 {count} 个结果",
     "youAreAnExpertIn": "您是{role}专家",
-    "sharedBy": "{userName} 分享"
+    "sharedBy": "{userName} 分享",
+    "copy": "复制",
+    "download": "下载",
+    "errorDetails": "错误详情",
+    "copyRawOutput": "复制原始输出",
+    "downloadRawOutput": "下载原始输出",
+    "arrangeNodes": "自动布局",
+    "nodesArranged": "布局应用成功",
+    "visibilityUpdated": "可见性更新成功",
+    "deleteConfirm": "您确定要删除此工作流吗？",
+    "deleted": "工作流已删除",
+    "completedSuccessfully": "成功完成",
+    "completedWithError": "完成但有错误",
+    "contentReadyDescription": "您的内容已准备好。您想查看吗？",
+    "viewResults": "查看结果",
+    "copyAll": "复制全部",
+    "downloadAll": "下载全部",
+    "executionSummary": "执行摘要",
+    "socialMediaContent": "社交媒体内容",
+    "toolResults": "工具结果",
+    "generatedContent": "生成的内容",
+    "generatedData": "生成的数据",
+    "resultsCopied": "结果已复制到剪贴板",
+    "resultsDownloaded": "结果已下载"
   },
   "Auth": {
     "SignIn": {
@@ -432,7 +455,8 @@
     "generateInputWithAIDescription": "编写提示为工作流生成输入",
     "example": {
       "babyResearch": "婴儿研究",
-      "getWeather": "获取天气"
+      "getWeather": "获取天气",
+      "contentRepurposing": "内容再利用"
     },
     "selectVariable": "选择变量",
     "structuredOutput": "结构化输出",

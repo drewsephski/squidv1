@@ -187,8 +187,11 @@ export const exaSearchToolForWorkflow = createTool({
     "Search the web using Exa AI - performs real-time web searches with semantic and neural search capabilities. Returns high-quality, relevant results with full content extraction.",
   inputSchema: jsonSchemaToZod(exaSearchSchema),
   execute: async (params) => {
+    // Handle different input structures from AI models
+    const query = params?.query || params?.q || params?.input || params;
+
     const searchRequest: ExaSearchRequest = {
-      query: params.query,
+      query: query,
       type: params.type || "auto",
       numResults: params.numResults || 5,
       contents: {
@@ -220,12 +223,12 @@ export const exaContentsToolForWorkflow = createTool({
   inputSchema: jsonSchemaToZod(exaContentsSchema),
   execute: async (params) => {
     const contentsRequest: ExaContentsRequest = {
-      ids: params.urls,
+      ids: params?.urls || params.urls || [],
       contents: {
         text: {
-          maxCharacters: params.maxCharacters || 3000,
+          maxCharacters: params?.maxCharacters || 3000,
         },
-        livecrawl: params.livecrawl || "preferred",
+        livecrawl: params?.livecrawl || "preferred",
       },
     };
 
@@ -288,7 +291,7 @@ export const exaContentsTool = createTool({
   execute: async (params) => {
     return safe(async () => {
       const contentsRequest: ExaContentsRequest = {
-        ids: params.urls,
+        ids: params?.urls || params.urls || [],
         contents: {
           text: {
             maxCharacters: params.maxCharacters || 3000,

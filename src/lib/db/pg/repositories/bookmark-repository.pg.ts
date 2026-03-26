@@ -1,6 +1,9 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { pgDb as db } from "../db.pg";
 import { BookmarkTable, AgentTable } from "../schema.pg";
+
+// Helper function to safely cast string to UUID in SQL
+const uuidEq = (column: any, value: string) => sql`${column} = ${value}::uuid`;
 
 export interface BookmarkRepository {
   createBookmark(
@@ -46,7 +49,7 @@ export const pgBookmarkRepository: BookmarkRepository = {
       .delete(BookmarkTable)
       .where(
         and(
-          eq(BookmarkTable.userId, userId),
+          uuidEq(BookmarkTable.userId, userId),
           eq(BookmarkTable.itemId, itemId),
           eq(BookmarkTable.itemType, itemType),
         ),
