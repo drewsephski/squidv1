@@ -24,9 +24,15 @@ ALTER TABLE "verification" ALTER COLUMN "created_at" SET DEFAULT now();--> state
 ALTER TABLE "verification" ALTER COLUMN "created_at" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "verification" ALTER COLUMN "updated_at" SET DEFAULT now();--> statement-breakpoint
 ALTER TABLE "verification" ALTER COLUMN "updated_at" SET NOT NULL;--> statement-breakpoint
-ALTER TABLE "workflow_run" ADD CONSTRAINT "workflow_run_workflow_id_workflow_id_fk" FOREIGN KEY ("workflow_id") REFERENCES "public"."workflow"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "workflow_run" ADD CONSTRAINT "workflow_run_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "workflow_run_user_id_idx" ON "workflow_run" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "workflow_run_workflow_id_idx" ON "workflow_run" USING btree ("workflow_id");--> statement-breakpoint
-CREATE INDEX "workflow_run_status_idx" ON "workflow_run" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "workflow_run_started_at_idx" ON "workflow_run" USING btree ("started_at");
+DO $$ BEGIN
+    ALTER TABLE "workflow_run" ADD CONSTRAINT "workflow_run_workflow_id_workflow_id_fk" FOREIGN KEY ("workflow_id") REFERENCES "public"."workflow"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+    ALTER TABLE "workflow_run" ADD CONSTRAINT "workflow_run_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "workflow_run_user_id_idx" ON "workflow_run" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "workflow_run_workflow_id_idx" ON "workflow_run" USING btree ("workflow_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "workflow_run_status_idx" ON "workflow_run" USING btree ("status");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "workflow_run_started_at_idx" ON "workflow_run" USING btree ("started_at");
