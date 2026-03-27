@@ -40,7 +40,7 @@ import { generateObjectAction } from "@/app/api/chat/actions";
 import { appStore } from "@/app/store";
 import { notify } from "lib/notify";
 import { SelectModel } from "@/components/select-model";
-import { WorkflowResultDialog } from "../workflow-result";
+import { WorkflowOutcomeLayer } from "../workflow-outcome-layer";
 import { useCopy } from "@/hooks/use-copy";
 import { useTranslations } from "next-intl";
 import { mutate } from "swr";
@@ -255,6 +255,7 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
                 case "WORKFLOW_END":
                   setResult(event);
                   stop();
+                  setShowResultDialog(true);
                   // Invalidate SWR cache to refresh sidebar
                   mutate("/api/workflow-run");
                   break;
@@ -521,7 +522,7 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
                   >
                     {t("Common.viewResults")}
                   </Button>
-                  <WorkflowResultDialog
+                  <WorkflowOutcomeLayer
                     result={result}
                     open={showResultDialog}
                     onOpenChange={setShowResultDialog}
