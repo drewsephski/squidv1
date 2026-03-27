@@ -237,13 +237,18 @@ export function WorkflowOutcomeLayer({
     .lp-btn-primary:hover .chevron-path { opacity: 0; }
     .lp-btn-primary:hover .arrow-path   { opacity: 1; }
 
+    .serif-content h1, .serif-content h2, .serif-content h3, .serif-content h4 {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+    }
+
     .lp-bc-accent {
       background-image: linear-gradient(
         175deg,
-        var(--card) 100%,
-        transparent 0%,
-        color-mix(in oklch, var(--card) 98%, var(--primary) 2%) 50%,
-        color-mix(in oklch, var(--card) 94%, var(--primary) 6%) 100%
+        var(--card) 0%,
+        color-mix(in oklch, var(--card) 98%, var(--secondary)) 60%,
+        color-mix(in oklch, var(--card) 96%, var(--secondary)) 100%
       );
       position: relative;
     }
@@ -252,8 +257,8 @@ export function WorkflowOutcomeLayer({
       position: absolute; inset: 0;
       background: radial-gradient(
         ellipse 70% 40% at 50% 0%,
-        color-mix(in oklch, var(--primary) 12%, transparent) 0%,
-        transparent 65%
+        color-mix(in oklch, var(--primary) 6%, transparent) 0%,
+        transparent 60%
       );
       pointer-events: none;
     }
