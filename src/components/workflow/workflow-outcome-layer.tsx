@@ -364,16 +364,16 @@ export function WorkflowOutcomeLayer({
                     )}
 
                     {/* Progressive Disclosure: Trace */}
-                    <div className="pt-12 border-t border-border/50">
+                    <div className="pt-12 border-t border-border/30">
                       <button
                         onClick={() => setShowTrace(!showTrace)}
-                        className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors group"
+                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50 hover:text-foreground transition-all group"
                       >
-                        <Terminal className="size-3" />
-                        <span>View Technical Trace</span>
+                        <Terminal className="size-3 opacity-50 group-hover:opacity-100" />
+                        <span>Technical Execution Trace</span>
                         <ChevronRight
                           className={cn(
-                            "size-3 transition-transform",
+                            "size-3 transition-transform duration-300",
                             showTrace && "rotate-90",
                           )}
                         />
@@ -385,10 +385,16 @@ export function WorkflowOutcomeLayer({
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden mt-4"
+                            transition={{
+                              duration: 0.4,
+                              ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="overflow-hidden mt-6"
                           >
-                            <div className="bg-muted/30 rounded-xl p-6 border border-border/50 font-mono text-xs text-muted-foreground overflow-x-auto">
-                              <pre>{JSON.stringify(result, null, 2)}</pre>
+                            <div className="bg-muted/20 rounded-xl p-6 border border-border/30 font-mono text-[11px] text-muted-foreground/70 overflow-x-auto leading-relaxed">
+                              <pre className="selection:bg-primary/20">
+                                {JSON.stringify(result, null, 2)}
+                              </pre>
                             </div>
                           </motion.div>
                         )}
