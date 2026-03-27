@@ -26,6 +26,7 @@ export interface AppState {
   mcpList: (MCPServerInfo & { id: string })[];
   agentList: AgentSummary[];
   workflowToolList: WorkflowSummary[];
+  unpublishedWorkflowCount: number;
   currentThreadId: ChatThread["id"] | null;
   toolChoice: "auto" | "none" | "manual";
   allowedMcpServers?: Record<string, AllowedMCPServer>;
@@ -81,6 +82,7 @@ const initialState: AppState = {
   mcpList: [],
   agentList: [],
   workflowToolList: [],
+  unpublishedWorkflowCount: 0,
   currentThreadId: null,
   toolChoice: "auto",
   allowedMcpServers: undefined,

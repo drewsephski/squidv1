@@ -30,6 +30,7 @@ import {
   GetWeather,
   ContentRepurposing,
   ProductResearch,
+  JobApplication,
 } from "lib/ai/workflow/examples";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -214,6 +215,9 @@ export default function WorkflowListPage({
                 onClick={() => createExample(ProductResearch())}
               >
                 🔍 {t("Workflow.example.productResearch")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => createExample(JobApplication())}>
+                💼 {t("Workflow.example.jobApplication")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -56,10 +56,11 @@ export function findJsonSchemaByPath(
   if (rest.length === 0) {
     return schema.properties?.[key] as JSONSchema7;
   }
-  return findJsonSchemaByPath(
-    schema.properties![key] as ObjectJsonSchema7,
-    rest,
-  );
+  const nestedSchema = schema.properties?.[key];
+  if (!nestedSchema || nestedSchema.type !== "object") {
+    return undefined;
+  }
+  return findJsonSchemaByPath(nestedSchema as ObjectJsonSchema7, rest);
 }
 
 export function findAvailableSchemaBySource({

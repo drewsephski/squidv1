@@ -128,6 +128,7 @@ export interface WorkflowRepository {
   selectByUserId(userId: string): Promise<DBWorkflow[]>;
   selectAll(userId: string): Promise<WorkflowSummary[]>;
   selectExecuteAbility(userId: string): Promise<WorkflowSummary[]>;
+  countUnpublishedByUserId(userId: string): Promise<number>;
   selectToolByIds(ids: string[]): Promise<
     {
       id: string;

@@ -234,7 +234,10 @@ const NodeExecutionMessage = memo(function NodeExecutionMessage({
         {isError && history.error && (
           <Alert variant="destructive" className="mb-2 py-2">
             <AlertDescription className="text-xs">
-              {history.error}
+              {typeof history.error === "string"
+                ? history.error
+                : (history.error as any)?.message ||
+                  JSON.stringify(history.error)}
             </AlertDescription>
           </Alert>
         )}

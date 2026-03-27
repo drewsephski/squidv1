@@ -98,6 +98,18 @@ export const pgWorkflowRepository: WorkflowRepository = {
       );
     return rows as WorkflowSummary[];
   },
+  async countUnpublishedByUserId(userId) {
+    const [result] = await pgDb
+      .select({ count: sql<number>`count(*)::int` })
+      .from(WorkflowTable)
+      .where(
+        and(
+          uuidEq(WorkflowTable.userId, userId),
+          eq(WorkflowTable.isPublished, false),
+        ),
+      );
+    return result?.count ?? 0;
+  },
   async selectAll(userId) {
     const rows = await pgDb
       .select({

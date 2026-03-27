@@ -1,6 +1,6 @@
 import { agentRepository } from "lib/db/repository";
 import { getSession } from "lib/auth/server-instance-with-headers";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { AgentsList } from "@/components/agent/agents-list";
 
 // Force dynamic rendering to avoid static generation issues with session
@@ -10,7 +10,7 @@ export default async function AgentsPage() {
   const session = await getSession();
 
   if (!session?.user.id) {
-    notFound();
+    redirect("/sign-in");
   }
 
   // Fetch agents data on the server

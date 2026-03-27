@@ -26,8 +26,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { WriteIcon } from "@/components/ui/write-icon";
+import { authClient } from "lib/auth/client";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -306,12 +307,12 @@ const css = `
     display: flex;
     flex-direction: column;
     transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-    /* Subtle warm gradient for cohesion with site design */
+    /* Clean neutral gradient for visual depth */
     background-image: linear-gradient(
       175deg,
-      color-mix(in oklch, var(--card) 100%, transparent) 0%,
-      color-mix(in oklch, var(--card) 99%, var(--foreground) 1%) 60%,
-      color-mix(in oklch, var(--card) 97%, var(--foreground) 3%) 100%
+      var(--card) 0%,
+      color-mix(in oklch, var(--card) 98%, var(--secondary)) 60%,
+      color-mix(in oklch, var(--card) 96%, var(--secondary)) 100%
     );
   }
   .lp-bc::before {
@@ -814,7 +815,7 @@ function NavbarWrapper() {
 }
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
-function Hero() {
+function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
   const stats = [
     { val: "100+", lbl: "Integrations" },
     { val: "99.9%", lbl: "Uptime SLA" },
@@ -837,7 +838,10 @@ function Hero() {
         security built in from day one.
       </p>
       <div className="lp-hero-actions">
-        <Link href="/sign-up" className="lp-btn-primary">
+        <Link
+          href={isAuthenticated ? "/chat" : "/sign-up"}
+          className="lp-btn-primary"
+        >
           Get started free <IconArrow />
         </Link>
       </div>
@@ -1098,7 +1102,7 @@ function Features() {
 }
 
 // ─── CTA ──────────────────────────────────────────────────────────────────────
-function Cta() {
+function Cta({ isAuthenticated }: { isAuthenticated: boolean }) {
   return (
     <section className="lp-cta">
       <div className="lp-cta-inner lp-reveal">
@@ -1108,7 +1112,10 @@ function Cta() {
           enterprise-grade security.
         </p>
         <div className="lp-cta-btns">
-          <Link href="/sign-up" className="lp-btn-primary">
+          <Link
+            href={isAuthenticated ? "/chat" : "/sign-up"}
+            className="lp-btn-primary"
+          >
             Start for free <IconArrow />
           </Link>
         </div>
@@ -1140,6 +1147,19 @@ function Footer() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function LandingPage() {
   const ref = useRef<HTMLDivElement>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await authClient.getSession();
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -1165,11 +1185,11 @@ export default function LandingPage() {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div className="lp" ref={ref}>
         <NavbarWrapper />
-        <Hero />
+        <Hero isAuthenticated={isAuthenticated} />
         <Trust />
         <Bento />
         <Features />
-        <Cta />
+        <Cta isAuthenticated={isAuthenticated} />
         <Footer />
       </div>
     </>

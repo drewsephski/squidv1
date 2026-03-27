@@ -28,6 +28,8 @@ import { DefaultToolIcon } from "./default-tool-icon";
 import equal from "lib/equal";
 import { EMOJI_DATA } from "lib/const";
 import { useIsMobile } from "@/hooks/use-mobile";
+import Link from "next/link";
+import { InfoIcon } from "lucide-react";
 
 type MentionItemType = {
   id: string;
@@ -156,11 +158,12 @@ export function ChatMentionInputSuggestion({
   disabledType?: ("mcp" | "workflow" | "defaultTool" | "agent")[];
 }) {
   const t = useTranslations("Common");
-  const [mcpList, workflowList, agentList] = appStore(
+  const [mcpList, workflowList, agentList, unpublishedWorkflowCount] = appStore(
     useShallow((state) => [
       state.mcpList,
       state.workflowToolList,
       state.agentList,
+      state.unpublishedWorkflowCount,
     ]),
   );
   const [searchValue, setSearchValue] = useState("");
@@ -620,7 +623,7 @@ export function ChatMentionInputSuggestion({
                     </div>
                   </div>
                 )}
-                {groupedMentions.workflow.items.length > 0 && (
+                {groupedMentions.workflow.items.length > 0 ? (
                   <div className="p-2 border-t">
                     <div className="text-xs font-medium text-muted-foreground px-2 py-1.5">
                       {groupedMentions.workflow.title}
@@ -639,6 +642,34 @@ export function ChatMentionInputSuggestion({
                         />
                       ))}
                     </div>
+                  </div>
+                ) : unpublishedWorkflowCount > 0 ? (
+                  <div className="p-2 border-t">
+                    <div className="text-xs font-medium text-muted-foreground px-2 py-1.5">
+                      {groupedMentions.workflow.title}
+                    </div>
+                    <div className="px-2 py-3 text-xs text-muted-foreground text-center space-y-1">
+                      <div>No published workflows</div>
+                      <div className="text-[10px] opacity-70">
+                        You have {unpublishedWorkflowCount} unpublished workflow
+                        {unpublishedWorkflowCount > 1 ? "s" : ""}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                {unpublishedWorkflowCount > 0 && (
+                  <div className="p-2 border-t">
+                    <Link
+                      href="/workflow"
+                      className="flex items-center gap-2 px-2 py-2 text-xs bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted rounded-sm transition-colors"
+                    >
+                      <InfoIcon className="size-3.5 text-amber-500" />
+                      <span>
+                        {unpublishedWorkflowCount} unpublished workflow
+                        {unpublishedWorkflowCount > 1 ? "s" : ""} — publish to
+                        use in chat
+                      </span>
+                    </Link>
                   </div>
                 )}
                 {groupedMentions.defaultTool.items.length > 0 && (
@@ -733,9 +764,35 @@ export function ChatMentionInputSuggestion({
                           />
                         ))
                       ) : (
-                        <div className="px-2 py-3 text-xs text-muted-foreground text-center">
-                          No workflows found
+                        <div className="px-2 py-3 text-xs text-muted-foreground text-center space-y-1">
+                          <div>No published workflows</div>
+                          {unpublishedWorkflowCount > 0 ? (
+                            <div className="text-[10px] opacity-70">
+                              You have {unpublishedWorkflowCount} unpublished
+                              workflow{unpublishedWorkflowCount > 1 ? "s" : ""}
+                            </div>
+                          ) : (
+                            <Link
+                              href="/chat/workflow"
+                              className="text-[10px] opacity-70 hover:opacity-100 hover:underline block"
+                            >
+                              Create your first workflow →
+                            </Link>
+                          )}
                         </div>
+                      )}
+                      {unpublishedWorkflowCount > 0 && (
+                        <Link
+                          href="/chat/workflow"
+                          className="flex items-center gap-2 px-2 py-2 mt-2 text-xs bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted rounded-sm transition-colors"
+                        >
+                          <InfoIcon className="size-3.5 text-amber-500" />
+                          <span>
+                            {unpublishedWorkflowCount} unpublished workflow
+                            {unpublishedWorkflowCount > 1 ? "s" : ""} — publish
+                            to use in chat
+                          </span>
+                        </Link>
                       )}
                     </div>
                   </div>
