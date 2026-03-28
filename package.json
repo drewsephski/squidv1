@@ -1,6 +1,6 @@
 {
   "name": "squid",
-  "version": "1.26.0",
+  "version": "1.5.2",
   "main": "dist-electron/main.js",
   "private": true,
   "author": "drewsepeczi",
@@ -179,7 +179,10 @@
     "wait-on": "^8.0.5"
   },
   "lint-staged": {
-    "*.{js,json,mjs,ts,yaml,tsx,css}": ["pnpm format", "pnpm lint:fix"]
+    "*.{js,json,mjs,ts,yaml,tsx,css}": [
+      "pnpm format",
+      "pnpm lint:fix"
+    ]
   },
   "engines": {
     "node": ">=18"
