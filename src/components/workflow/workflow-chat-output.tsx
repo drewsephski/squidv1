@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo, useRef, useEffect } from "react";
+import { memo, useMemo, useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   NodeRuntimeHistory,
@@ -18,6 +18,7 @@ import {
   Check,
   Copy,
   Clock,
+  Loader,
   AlertTriangle,
   ChevronDown,
   Bot,
@@ -131,6 +132,8 @@ const NodeExecutionMessage = memo(function NodeExecutionMessage({
   const outputText = useMemo(() => {
     if (!output) return null;
     if (typeof output === "string") return output;
+    if (output.answer && typeof output.answer === "string")
+      return output.answer;
     if (output.text && typeof output.text === "string") return output.text;
     if (output.content && typeof output.content === "string")
       return output.content;
@@ -411,29 +414,8 @@ export const WorkflowChatOutput = memo(function WorkflowChatOutput({
               isLatest={index === histories.length - 1}
             />
           ))}
-
-          {/* Workflow completion indicator */}
-          {!isRunning && histories.length > 0 && (
-            <motion.div
-              variants={messageVariants}
-              initial="hidden"
-              animate="visible"
-              className="flex items-center gap-2 py-3 px-2 text-xs text-muted-foreground"
-            >
-              <Separator className="flex-1" />
-              <span className="flex items-center gap-1">
-                <Check className="size-3 text-primary" />
-                Workflow completed
-              </span>
-              <Separator className="flex-1" />
-            </motion.div>
-          )}
         </motion.div>
       </AnimatePresence>
     </div>
   );
 });
-
-// Import missing dependencies
-import { useState } from "react";
-import { Loader } from "lucide-react";
