@@ -12,16 +12,7 @@ import { GraphEndEvent } from "ts-edge";
 import { allNodeValidate } from "lib/ai/workflow/node-validate";
 import { toast } from "sonner";
 import { decodeWorkflowEvents } from "lib/ai/workflow/shared.workflow";
-import { Alert, AlertDescription, AlertTitle } from "ui/alert";
-import {
-  AlertTriangleIcon,
-  Loader,
-  Copy,
-  Check,
-  WandSparklesIcon,
-  XIcon,
-} from "lucide-react";
-import JsonView from "ui/json-view";
+import { Loader, WandSparklesIcon, XIcon } from "lucide-react";
 import { Button } from "ui/button";
 import { Separator } from "ui/separator";
 import { FlipWords } from "ui/flip-words";
@@ -41,7 +32,6 @@ import { appStore } from "@/app/store";
 import { notify } from "lib/notify";
 import { SelectModel } from "@/components/select-model";
 import { WorkflowOutcomeLayer } from "../workflow-outcome-layer";
-import { useCopy } from "@/hooks/use-copy";
 import { useTranslations } from "next-intl";
 import { mutate } from "swr";
 import { WorkflowChatOutput } from "../workflow-chat-output";
@@ -77,7 +67,6 @@ export function ExecuteTab({
   const [histories, setHistories] = useState<NodeRuntimeHistory[]>([]);
   const [result, setResult] = useState<GraphEndEvent | undefined>();
   const [showResultDialog, setShowResultDialog] = useState(false);
-  const { copied, copy } = useCopy();
 
   const isProcessing = useMemo(
     () => Boolean(processIds.length),
@@ -329,35 +318,6 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
     [workflow!.id],
   );
 
-  const lastOutput = useMemo(() => {
-    const outputNodes = histories
-      .filter((h) => h.kind == NodeKind.Output)
-      .map((h) => h.result?.output)
-      .filter(Boolean);
-
-    if (outputNodes.length == 0) return undefined;
-    if (outputNodes.length == 1) return outputNodes[0];
-    return outputNodes;
-  }, [histories]);
-
-  const resultView = useMemo(() => {
-    if (isRunning) return;
-    if (result?.isOk === false)
-      return (
-        <Alert variant={"destructive"} className="border-destructive">
-          <AlertTriangleIcon />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            <JsonView data={result?.error} />
-          </AlertDescription>
-        </Alert>
-      );
-    return (
-      <div className="p-2">
-        <JsonView data={lastOutput} />
-      </div>
-    );
-  }, [isRunning, result]);
   return (
     <div className="fade-300 w-sm h-[85vh] bg-card border rounded-lg shadow-lg overflow-y-auto py-4">
       <div className="flex flex-col px-4">
@@ -501,51 +461,26 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
           <WorkflowChatOutput
             histories={histories}
             isRunning={isRunning}
-            className="flex-1 max-h-[50vh]"
+            className="flex-1 max-h-[80vh]"
           />
 
-          <Separator />
-
-          {/* Final result section */}
-          <div className="px-4 py-4">
-            <div className="flex items-center mb-3">
-              <p className="font-semibold text-sm text-foreground">
-                Final Output
-              </p>
-              <div className="flex-1" />
-              {result && (
-                <>
-                  <Button
-                    size="sm"
-                    onClick={() => setShowResultDialog(true)}
-                    className="mr-2"
-                  >
-                    {t("Common.viewResults")}
-                  </Button>
-                  <WorkflowOutcomeLayer
-                    result={result}
-                    open={showResultDialog}
-                    onOpenChange={setShowResultDialog}
-                  />
-                </>
-              )}
-              {lastOutput && (
-                <Button
-                  variant={"ghost"}
-                  size={"icon"}
-                  className="border-border hover:bg-muted transition-all duration-200"
-                  onClick={() => copy(JSON.stringify(lastOutput))}
-                >
-                  {copied ? (
-                    <Check className="size-3 text-primary animate-fade-in" />
-                  ) : (
-                    <Copy className="size-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                  )}
-                </Button>
-              )}
+          {/* View Results button at bottom */}
+          {result && (
+            <div className="px-4 py-3 border-t">
+              <Button
+                size="sm"
+                onClick={() => setShowResultDialog(true)}
+                className="w-full"
+              >
+                {t("Common.viewResults")}
+              </Button>
+              <WorkflowOutcomeLayer
+                result={result}
+                open={showResultDialog}
+                onOpenChange={setShowResultDialog}
+              />
             </div>
-            {resultView}
-          </div>
+          )}
         </div>
       ) : null}
     </div>

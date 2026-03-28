@@ -1,18 +1,10 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraphEndEvent } from "ts-edge";
-import {
-  CheckCircle2,
-  XCircle,
-  Copy,
-  ChevronRight,
-  ArrowRight,
-  Terminal,
-  X,
-} from "lucide-react";
+import { XCircle, ChevronRight, Terminal, X } from "lucide-react";
 import { toast } from "sonner";
 import * as Portal from "@radix-ui/react-portal";
 
@@ -28,12 +20,12 @@ import { cn, errorToString } from "lib/utils";
 const TECHNICAL_KEYS = new Set([
   "id",
   "version",
-  "workflowId",
+  "workflowid",
   "kind",
-  "uiConfig",
-  "nodeConfig",
-  "createdAt",
-  "updatedAt",
+  "uiconfig",
+  "nodeconfig",
+  "createdat",
+  "updatedat",
   "source",
   "target",
   "edges",
@@ -43,7 +35,7 @@ const TECHNICAL_KEYS = new Set([
   "provider",
   "headers",
   "status",
-  "statusText",
+  "statustext",
   "ok",
   "duration",
   "size",
@@ -52,18 +44,41 @@ const TECHNICAL_KEYS = new Set([
   "timeout",
   "query",
   "path",
-  "mentionSuggestionChar",
+  "mentionsuggestionchar",
   "attrs",
   "label",
   "position",
   "type",
   "description",
-  "totalTokens",
+  "totaltokens",
+  "outputs",
+  "latitude",
+  "longitude",
+  "generationtime_ms",
+  "utc_offset_seconds",
+  "timezone",
+  "timezone_abbreviation",
+  "elevation",
+  "hourly",
+  "daily",
+  "current_units",
+  "hourly_units",
+  "daily_units",
+  "response",
+  "body",
+  "responseformat",
 ]);
+
+function isUuid(key: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    key,
+  );
+}
 
 function isTechnicalKey(key: string): boolean {
   return (
     TECHNICAL_KEYS.has(key.toLowerCase()) ||
+    key.toLowerCase().endsWith("units") ||
     key.endsWith("Id") ||
     key.endsWith("ID") ||
     key.startsWith("_")
@@ -72,9 +87,19 @@ function isTechnicalKey(key: string): boolean {
 
 function filterTechnicalFields(obj: any): any {
   if (typeof obj !== "object" || obj === null) return obj;
-  if (Array.isArray(obj)) return obj.map(filterTechnicalFields);
+  if (Array.isArray(obj)) {
+    const filteredArr = obj.map(filterTechnicalFields).filter((item) => {
+      if (item === null || item === undefined) return false;
+      if (Array.isArray(item) && item.length === 0) return false;
+      if (typeof item === "object" && Object.keys(item).length === 0)
+        return false;
+      return true;
+    });
+    return filteredArr.length > 0 ? filteredArr : null;
+  }
 
   const filtered: any = {};
+  let hasData = false;
   for (const [key, value] of Object.entries(obj)) {
     if (isTechnicalKey(key)) continue;
     if (value === null || value === undefined) continue;
@@ -86,20 +111,20 @@ function filterTechnicalFields(obj: any): any {
     )
       continue;
 
-    if (typeof value === "object" && value !== null) {
-      const filteredValue = filterTechnicalFields(value);
-      if (
-        typeof filteredValue === "object" &&
-        !Array.isArray(filteredValue) &&
-        Object.keys(filteredValue).length === 0
-      )
-        continue;
-      filtered[key] = filteredValue;
-    } else {
-      filtered[key] = value;
-    }
+    const filteredValue = filterTechnicalFields(value);
+    if (filteredValue === null || filteredValue === undefined) continue;
+    if (Array.isArray(filteredValue) && filteredValue.length === 0) continue;
+    if (
+      typeof filteredValue === "object" &&
+      !Array.isArray(filteredValue) &&
+      Object.keys(filteredValue).length === 0
+    )
+      continue;
+
+    filtered[key] = filteredValue;
+    hasData = true;
   }
-  return filtered;
+  return hasData ? filtered : null;
 }
 
 function objectToMarkdown(obj: any, level = 0): string {
@@ -107,7 +132,10 @@ function objectToMarkdown(obj: any, level = 0): string {
   if (typeof obj !== "object" || obj === null) return String(obj);
   if (Array.isArray(obj)) {
     return obj
-      .map((item) => `- ${objectToMarkdown(item, level + 1)}`)
+      .map((item) => {
+        const itemVal = objectToMarkdown(item, level + 1);
+        return level === 0 ? `### ${itemVal}` : `- ${itemVal}`;
+      })
       .join("\n");
   }
 
@@ -119,17 +147,25 @@ function objectToMarkdown(obj: any, level = 0): string {
       const cleanKey = key
         .replace(/_/g, " ")
         .replace(/\b\w/g, (l) => l.toUpperCase());
+
+      // If key is a UUID, just show the value
+      const isUuid =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          key,
+        );
+      const keyPrefix = isUuid ? "" : `**${cleanKey}:** `;
+
       if (
         typeof value === "object" &&
         value !== null &&
         !Array.isArray(value)
       ) {
-        return `**${cleanKey}:**\n${objectToMarkdown(value, level + 1)}`;
+        return `${keyPrefix}\n${objectToMarkdown(value, level + 1)}`;
       }
       if (Array.isArray(value)) {
-        return `**${cleanKey}:**\n${value.map((v) => `- ${objectToMarkdown(v, level + 1)}`).join("\n")}`;
+        return `${keyPrefix}\n${value.map((v) => `- ${objectToMarkdown(v, level + 1)}`).join("\n")}`;
       }
-      return `**${cleanKey}:** ${value}`;
+      return `${keyPrefix}${value}`;
     })
     .join("\n\n");
 }
@@ -144,31 +180,120 @@ function extractFinalOutcome(output: any): {
   if (!output) return { type: "empty", content: "" };
   if (typeof output === "string") return { type: "markdown", content: output };
 
-  // Prioritize common "final result" keys
-  const priorityKeys = ["answer", "content", "result", "output", "template"];
+  // 1. Check for priority keys at the top level
+  // If we find one of these, we ignore everything else
+  const priorityKeys = [
+    "answer",
+    "content",
+    "result",
+    "results",
+    "final_answer",
+    "formatted_result",
+    "current",
+    "weather",
+  ];
+
   for (const key of priorityKeys) {
-    if (output[key] && typeof output[key] === "string") {
-      return { type: "markdown", content: output[key] };
+    if (output[key]) {
+      const val = output[key];
+      if (typeof val === "string") return { type: "markdown", content: val };
+      if (typeof val === "object" && val !== null) {
+        const filtered = filterTechnicalFields(val);
+        if (filtered) {
+          return { type: "markdown", content: objectToMarkdown(filtered) };
+        }
+      }
     }
   }
 
-  // Handle HTTP response body
-  if (output.response?.body && typeof output.response.body === "string") {
+  // 2. Recursively search for priority keys in nested objects
+  function findPriorityContent(
+    obj: any,
+  ): { type: "markdown" | "text"; content: string } | null {
+    if (typeof obj !== "object" || obj === null) return null;
+
+    for (const key of priorityKeys) {
+      if (obj[key]) {
+        const val = obj[key];
+        if (typeof val === "string") return { type: "markdown", content: val };
+        if (typeof val === "object" && val !== null) {
+          const filtered = filterTechnicalFields(val);
+          if (filtered) {
+            return { type: "markdown", content: objectToMarkdown(filtered) };
+          }
+        }
+      }
+    }
+
+    // Recurse into nested objects
+    for (const [, val] of Object.entries(obj)) {
+      if (typeof val === "object" && val !== null) {
+        const result = findPriorityContent(val);
+        if (result) return result;
+      }
+    }
+
+    return null;
+  }
+
+  const nestedContent = findPriorityContent(output);
+  if (nestedContent) {
+    return nestedContent;
+  }
+
+  // 3. Handle HTTP response structure specifically
+  if (output.response?.body) {
+    const body = output.response.body;
+    if (typeof body === "string") {
+      try {
+        const parsed = JSON.parse(body);
+        return extractFinalOutcome(parsed);
+      } catch {
+        return { type: "markdown", content: body };
+      }
+    }
+    return extractFinalOutcome(body);
+  }
+
+  if (output.body && typeof output.body === "string") {
     try {
-      const parsed = JSON.parse(output.response.body);
+      const parsed = JSON.parse(output.body);
       return extractFinalOutcome(parsed);
     } catch {
-      return { type: "text", content: output.response.body };
+      // ignore
     }
   }
 
-  // If it's a complex object, filter and convert
+  // 4. Filter the object and see what's left
   const filtered = filterTechnicalFields(output);
-  if (Object.keys(filtered).length > 0) {
-    return { type: "markdown", content: objectToMarkdown(filtered) };
+  if (!filtered) return { type: "empty", content: "" };
+
+  // Remove UUID keys if there are non-UUID keys present
+  const keys = Object.keys(filtered);
+  const hasNonUuidKey = keys.some((k) => !isUuid(k));
+  if (hasNonUuidKey) {
+    for (const key of keys) {
+      if (isUuid(key)) delete filtered[key];
+    }
   }
 
-  return { type: "empty", content: "" };
+  const remainingKeys = Object.keys(filtered);
+  if (remainingKeys.length === 0) return { type: "empty", content: "" };
+
+  // If only one key remains, return its value directly
+  if (remainingKeys.length === 1) {
+    const onlyVal = filtered[remainingKeys[0]];
+    if (typeof onlyVal === "string")
+      return { type: "markdown", content: onlyVal };
+    if (typeof onlyVal === "object" && onlyVal !== null) {
+      // Try to find priority content in the single remaining value first
+      const priorityInValue = findPriorityContent(onlyVal);
+      if (priorityInValue) return priorityInValue;
+      return { type: "markdown", content: objectToMarkdown(onlyVal) };
+    }
+  }
+
+  return { type: "markdown", content: objectToMarkdown(filtered) };
 }
 
 interface WorkflowOutcomeLayerProps {
@@ -223,6 +348,7 @@ export function WorkflowOutcomeLayer({
       box-shadow: 0 1px 4px oklch(0 0 0 / 0.12);
       transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
       position: relative; overflow: hidden;
+      cursor: pointer;
     }
     .lp-btn-primary:hover {
       opacity: 0.88; transform: translateY(-1px);
@@ -241,13 +367,22 @@ export function WorkflowOutcomeLayer({
       font-family: 'Instrument Serif', serif;
       font-style: italic;
       font-weight: 400;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .serif-content p, .serif-content li {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.2rem;
+      line-height: 1.4;
+      margin-bottom: 0.75rem;
     }
 
     .lp-bc-accent {
       background-image: linear-gradient(
         175deg,
         var(--card) 0%,
-        color-mix(in oklch, var(--card) 98%, var(--secondary)) 60%,
+        color-mix(in oklch, var(--card) 98%, var(--secondary)) 40%,
         color-mix(in oklch, var(--card) 96%, var(--secondary)) 100%
       );
       position: relative;
@@ -267,6 +402,15 @@ export function WorkflowOutcomeLayer({
         circle, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px
       );
       background-size: 24px 24px;
+    }
+
+    .outcome-content {
+      animation: outcome-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes outcome-fade-in {
+      from { opacity: 0; transform: translateY(10px); filter: blur(4px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
     }
   `;
 
@@ -301,118 +445,120 @@ export function WorkflowOutcomeLayer({
               {/* Header */}
               <div className="px-8 py-6 flex items-center justify-between border-b border-border/50 relative z-10">
                 <div>
-                  <h2 className="lp-serif text-3xl italic font-normal text-foreground">
-                    {isSuccess ? "Final Outcome" : "Workflow Failed"}
+                  <h2 className="lp-serif text-2xl italic font-normal text-foreground">
+                    {isSuccess ? "Outcome" : "Error"}
                   </h2>
-                  <p className="text-sm text-muted-foreground mt-1 font-medium">
-                    {isSuccess
-                      ? "Generated successfully"
-                      : "Execution encountered an error"}
+                  <p className="text-[11px] text-muted-foreground mt-0.5 font-medium uppercase tracking-wider opacity-70">
+                    {isSuccess ? "Workflow completed" : "Execution failed"}
                   </p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => onOpenChange(false)}
-                  className="rounded-full hover:bg-muted/50"
+                  className="rounded-full hover:bg-muted/50 size-8"
                 >
-                  <X className="size-5" />
+                  <X className="size-4" />
                 </Button>
               </div>
 
               {/* Scrollable Content */}
-              <ScrollArea className="flex-1 lp-dot-grid">
-                <div className="max-w-4xl mx-auto px-8 py-12">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="space-y-8"
-                  >
-                    {isSuccess ? (
-                      hasContent ? (
-                        <div className="prose prose-lg dark:prose-invert max-w-none serif-content">
-                          {outcome.type === "markdown" ? (
-                            <MarkdownView content={outcome.content} />
-                          ) : (
-                            <pre className="whitespace-pre-wrap font-sans text-foreground">
-                              {outcome.content}
-                            </pre>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-center py-20">
-                          <p className="text-muted-foreground italic">
-                            No readable outcome was generated.
-                          </p>
-                        </div>
-                      )
-                    ) : (
-                      <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-8">
-                        <div className="flex items-start gap-4">
-                          <XCircle className="size-8 text-destructive shrink-0" />
-                          <div>
-                            <h3 className="text-lg font-semibold text-destructive mb-2">
-                              Error Details
-                            </h3>
-                            <p className="text-destructive/80 font-mono text-sm">
-                              {errorToString(result.error)}
+              <div className="flex-1 min-h-0 overflow-hidden relative overscroll-contain">
+                <ScrollArea className="h-full lp-dot-grid scroll-smooth">
+                  <div className="max-w-3xl mx-auto px-6 pt-8 pb-32">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="space-y-8"
+                    >
+                      {isSuccess ? (
+                        hasContent ? (
+                          <div className="serif-content outcome-content">
+                            {outcome.type === "markdown" ? (
+                              <div className="prose prose-base dark:prose-invert max-w-none leading-relaxed selection:bg-primary/10">
+                                <MarkdownView content={outcome.content} />
+                              </div>
+                            ) : (
+                              <div className="bg-muted/30 p-6 rounded-xl border border-border/50 font-sans text-base text-foreground leading-relaxed">
+                                {outcome.content}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-center py-20">
+                            <p className="text-muted-foreground italic">
+                              No readable outcome was generated.
                             </p>
                           </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Progressive Disclosure: Trace */}
-                    <div className="pt-12 border-t border-border/30">
-                      <button
-                        onClick={() => setShowTrace(!showTrace)}
-                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50 hover:text-foreground transition-all group"
-                      >
-                        <Terminal className="size-3 opacity-50 group-hover:opacity-100" />
-                        <span>Technical Execution Trace</span>
-                        <ChevronRight
-                          className={cn(
-                            "size-3 transition-transform duration-300",
-                            showTrace && "rotate-90",
-                          )}
-                        />
-                      </button>
-
-                      <AnimatePresence>
-                        {showTrace && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{
-                              duration: 0.4,
-                              ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="overflow-hidden mt-6"
-                          >
-                            <div className="bg-muted/20 rounded-xl p-6 border border-border/30 font-mono text-[11px] text-muted-foreground/70 overflow-x-auto leading-relaxed">
-                              <pre className="selection:bg-primary/20">
-                                {JSON.stringify(result, null, 2)}
-                              </pre>
+                        )
+                      ) : (
+                        <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-8">
+                          <div className="flex items-start gap-4">
+                            <XCircle className="size-8 text-destructive shrink-0" />
+                            <div>
+                              <h3 className="text-lg font-semibold text-destructive mb-2">
+                                Error Details
+                              </h3>
+                              <p className="text-destructive/80 font-mono text-sm">
+                                {errorToString(result.error)}
+                              </p>
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </motion.div>
-                </div>
-              </ScrollArea>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Progressive Disclosure: Trace */}
+                      <div className="pt-8 border-t border-border/20">
+                        <button
+                          onClick={() => setShowTrace(!showTrace)}
+                          className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30 hover:text-foreground transition-all group bg-transparent border-0 p-0 cursor-pointer"
+                        >
+                          <Terminal className="size-2.5 opacity-30 group-hover:opacity-100" />
+                          <span>Technical Execution Trace</span>
+                          <ChevronRight
+                            className={cn(
+                              "size-3 transition-transform duration-300",
+                              showTrace && "rotate-90",
+                            )}
+                          />
+                        </button>
+
+                        <AnimatePresence>
+                          {showTrace && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{
+                                duration: 0.4,
+                                ease: [0.22, 1, 0.36, 1],
+                              }}
+                              className="overflow-hidden mt-4"
+                            >
+                              <div className="bg-muted/10 rounded-lg p-4 border border-border/20 font-mono text-[10px] text-muted-foreground/50 overflow-x-auto leading-tight">
+                                <pre className="selection:bg-primary/10">
+                                  {JSON.stringify(result, null, 2)}
+                                </pre>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  </div>
+                </ScrollArea>
+              </div>
 
               {/* Footer Actions */}
-              <div className="px-8 py-6 bg-background/50 backdrop-blur-sm border-t border-border/50 flex items-center justify-between relative z-10">
+              <div className="px-6 py-4 bg-background/50 backdrop-blur-sm border-t border-border/50 flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-4">
                   {isSuccess && hasContent && (
                     <button onClick={handleCopy} className="lp-btn-primary">
-                      <span>Copy outcome</span>
+                      <span>Copy results</span>
                       <svg
-                        width="13"
-                        height="13"
+                        width="11"
+                        height="11"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -433,9 +579,9 @@ export function WorkflowOutcomeLayer({
                 <Button
                   variant="outline"
                   onClick={() => onOpenChange(false)}
-                  className="rounded-xl px-6"
+                  className="rounded-lg px-6 py-4 text-xs font-semibold uppercase tracking-wider hover:bg-muted/80 transition-colors border-border/50 h-9"
                 >
-                  Back to Workflow
+                  Close
                 </Button>
               </div>
             </motion.div>
